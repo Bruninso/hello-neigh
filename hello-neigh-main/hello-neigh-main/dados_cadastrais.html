@@ -5,13 +5,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hello Neighbour</title>
-  <link rel="icon" href="src/img/icone.jpg">
+  <!--link rel="icon" href="src/img/icone.jpg"-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/Tabela.css">
+  <link rel="stylesheet" type="text/css" href="css/Tabela.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://kit.fontawesome.com/7291c7ba47.js" crossorigin="anonymous"></script>
 
@@ -22,62 +23,59 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
       <div class="container-fluid">
         <a class="navbar-brand fonte-titulo cor-especial" href="index.html">Hello Neighbour</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end nav-hover" id="navbarNavAltMarkup">
           <ul class="navbar-nav">
             <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
-            
-            <li><a class="nav-link"  href="index.html#meus-condominios">Condominios</a></li>
-            <li><a class="nav-link"  href="/comunidade/comunidade.html">Comunidade</a></li>
-            <li><a class="nav-link" data-bs-toggle="modal" data-bs-target="#modal-Contato" href="#">Notificações</a></li>
+
+            <li><a class="nav-link" href="index.html#meus-condominios">Condominios</a></li>
+            <li><a class="nav-link" href="/comunidade/comunidade.html">Comunidade</a></li>
+            <li><a class="nav-link" data-bs-toggle="modal" data-bs-target="#modal-Contato" href="#">Notificações</a>
+            </li>
             <li><a class="nav-link" href="#">Sair</a></li>
           </ul>
         </div>
       </div>
     </nav>
   </header>
-  <main>  
-  <section class="container mt-3">
-    <h2 id="titulo-form" class="nav-titulo">Dados Cadastrais</h2>
-    <ul id="mensagens-erro"></ul>
-    <form id="form-adiciona">
-      <div class="">
-        <label for="nome" class="fs-5 text-uppercase">Nome</label>
-        <input id="nome" name="nome" type="text" value="Nayara" class="campo campo-medio">
-      </div>
+  <main>
+    <section class="container mt-3">
+      <h2 id="titulo-form" class="nav-titulo">Dados Cadastrais</h2>
+      <ul id="mensagens-erro"></ul>
+      <form id="form-adiciona">
+        <div class="">
+          <label for="nome" class="fs-5 text-uppercase">Nome Completo</label>
+          <input id="nome" name="nome" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="">
-        <label for="nome" class="fs-5 text-uppercase">Sobrenome</label>
-        <input id="nome" name="nome" type="text" value="Lucia" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="cpf" class="fs-5 text-uppercase">CPF</label>
+          <input id="cpf" name="cpf" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="grupo">
-        <label for="ra" class="fs-5 text-uppercase">CPF</label>
-        <input id="ra" name="ra" type="text" value="975.932.345-00" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="rg" class="fs-5 text-uppercase">RG</label>
+          <input id="rg" name="rg" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="grupo">
-        <label for="area" class="fs-5 text-uppercase">RG</label>
-        <input id="area" name="area" type="text" value="32323453235" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="sexo" class="fs-5 text-uppercase">Sexo</label>
+          <select id="sexo" name="sexo" class="campo campo-medio">
+            <option selected="selected" value="">Selecione uma opção</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Não Especificado">Não Especificado</option>
+          </select>
+        </div>
 
-      <div class="grupo">
-        <label for="area" class="fs-5 text-uppercase">Sexo</label>
-        <select class="campo campo-medio">
-          <option selected="selected" value="2">Feminino</option>
-          <option value="1">Masculino</option>
-          <option value="0">Não Especificado</option>
-         </select>
-      </div>
-
-      <div class="grupo">
-        <label for="tel" class="fs-5 text-uppercase">Nacionalidade</label>
-        <select class="campo campo-medio">
-          <option selected="selected" value="2">Brasileira</option>
-            <option value="">Selecione uma opção</option>
-            <option selected="selected" value="12">Brasileiro(a)</option>
+        <div class="grupo">
+          <label for="nacionalidade" class="fs-5 text-uppercase">Nacionalidade</label>
+          <select id="nacionalidade" name="nacionalidade" class="campo campo-medio">
+            <option selected="selected" value="">Selecione uma opção</option>
+            <option value="12">Brasileiro(a)</option>
             <option value="124">Afegã(o)</option>
             <option value="15">Albanês(esa)</option>
             <option value="27">Alemã(ão)</option>
@@ -269,37 +267,64 @@
             <option value="198">Vietnamita</option>
             <option value="90">Zambiano(a)</option>
             <option value="199">Zimbabuano(a)</option>
-         </select>
-      </div>
+          </select>
+        </div>
 
-      <div class="grupo">
-        <label for="salario" class="fs-5 text-uppercase">Data de Nascimento</label>
-        <input id="salario" name="salario" type="text" value="15/11/2001" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="nascimento" class="fs-5 text-uppercase">Data de Nascimento</label>
+          <input id="nascimento" name="nascimento" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="grupo">
-        <label for="salario" class="fs-5 text-uppercase">Bloco</label>
-        <input id="salario" name="salario" type="text" value="Turquesa" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="bloco" class="fs-5 text-uppercase">Bloco</label>
+          <input id="bloco" name="bloco" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="grupo">
-        <label for="salario" class="fs-5 text-uppercase">Apartamento</label>
-        <input id="salario" name="salario" type="text" value="123" class="campo campo-medio">
-      </div>
+        <div class="grupo">
+          <label for="apartamento" class="fs-5 text-uppercase">Apartamento</label>
+          <input id="apartamento" name="apartamento" type="text"  class="campo campo-medio">
+        </div>
 
-      <div class="grupo">
-        <label for="tel" class="fs-5 text-uppercase">Telefone</label>
-        <input id="tel" name="tel" type="text" value="(11) 97203-0941" class="campo campo-medio">
-      </div>
-      
-  
-      <button id="adicionar-funcionario" class="botao bto-principal fs-5 text-uppercase btn-primary">Atualizar dados</button>
-    </form>
-  </section>
-  
-  <script src="js/from.js"></script>
-  <script src="js/remover-funcionario.js"></script>
-  <script src="js/filtra.js"></script>
-  <script src="js/buscar-funcionarios.js"></script>
+        <div class="grupo">
+          <label for="telefone" class="fs-5 text-uppercase">Telefone</label>
+          <input id="telefone" name="telefone" type="text" class="campo campo-medio">
+        </div>
+
+
+        <button id="adicionar-morador" class="botao bto-principal fs-5 text-uppercase btn-primary">Adicionar
+          Morador</button>
+      </form>
+    </section>
+
+    <section class="container mt-3">
+      <h2>Moradores Cadastrados</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF </th>
+            <th>Telefone </th>
+            <th>RG </th>
+            <th>Bloco </th>
+            <th>Apartamento </th>
+            <th>Sexo </th>
+            <th>País </th>
+            <th>Nascimento </th>
+          </tr>
+        </thead>
+        <tbody id="tabela-moradores">
+        </tbody>
+      </table>
+    </section>
+
+
+    <script src="js/form-morador.js"></script>
+    <!--
+    <script src="js/from.js"></script>
+    <script src="js/remover-funcionario.js"></script>
+    <script src="js/filtra.js"></script>
+    <script src="js/buscar-funcionarios.js"></script>
+    -->
 </body>
+
 </html>

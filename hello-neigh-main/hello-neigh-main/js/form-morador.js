@@ -1,0 +1,173 @@
+var botaoAdicionar = document.querySelector("#adicionar-morador");
+
+botaoAdicionar.addEventListener("click", function (event) {
+	event.preventDefault();
+
+
+
+	var form = document.querySelector("#form-adiciona");
+
+	// extrai informacoes do morador
+	var morador = obtemMoradorDoFormulario(form);
+
+	var erros = validaMorador(morador);
+
+	if (erros.length > 0) {
+		exibiMensagensDeErro(erros)
+
+		return
+	}
+	// aciciona o morador na tabela
+	adicionaMoradorNaTabela(morador)
+
+	form.reset();
+	var mensagensDeErro = document.querySelector("#mensagens-erro");
+	mensagensDeErro.innerHTML = "";
+
+});
+
+function adicionaMoradorNaTabela(morador) {
+	var moradorTr = montaTr(morador);
+	var tabela = document.querySelector("#tabela-moradores");
+	tabela.appendChild(moradorTr);
+
+}
+
+function obtemMoradorDoFormulario(form) {
+	var morador = {
+		nome: form.nome.value,
+		cpf: form.cpf.value,
+		rg: form.rg.value,
+		telefone: form.telefone.value,
+		bloco: form.bloco.value,
+		apartamento: form.apartamento.value,
+		sexo: form.sexo.value,
+		nacionalidade: form.nacionalidade.options[form.nacionalidade.selectedIndex].text,
+		//pegar o texto visivel entre os options, sem necessidade de reescrever o value de todas as opções 
+		nascimento: form.nascimento.value
+	}
+
+	return morador;
+}
+
+function montaTr(morador) {
+
+	var moradorTr = document.createElement("tr");
+	moradorTr.classList.add("morador");
+
+	moradorTr.appendChild(montaTd(morador.nome, "info-nome"));
+	moradorTr.appendChild(montaTd(morador.cpf, "info-cpf"));
+	moradorTr.appendChild(montaTd(morador.rg, "info-rg"));
+	moradorTr.appendChild(montaTd(morador.telefone, "info-tel"));
+	moradorTr.appendChild(montaTd(morador.bloco, "info-bloco"));
+	moradorTr.appendChild(montaTd(morador.apartamento, "info-apt"));
+	moradorTr.appendChild(montaTd(morador.sexo, "info-sexo"));
+	moradorTr.appendChild(montaTd(morador.nacionalidade, "info-pais"));
+	moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
+
+	return moradorTr
+}
+
+function montaTd(dado, classe) {
+
+	var Td = document.createElement("td");
+	Td.textContent = dado;
+	Td.classList.add(classe);
+
+	return Td;
+}
+
+function validaMorador(morador) {
+    var erros = [];
+
+    if (!morador.nome) erros.push("O nome não pode estar vazio.");
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(morador.nome)) erros.push("O nome deve conter apenas letras.");
+
+    if (!morador.cpf) erros.push("O CPF não pode estar vazio.");
+    if (!/^\d{11}$/.test(morador.cpf.replace(/\D/g, ''))) erros.push("O CPF deve conter 11 dígitos numéricos.");
+	//morador.cpf.replace(/\D/g, ''): remove pontuação do CPF para validar somente números.
+
+    if (!morador.rg) erros.push("O RG não pode estar vazio.");
+    if (!/^\d+$/.test(morador.rg)) erros.push("O RG deve conter apenas números.");
+
+    if (!morador.telefone) erros.push("O telefone não pode estar vazio.");
+
+    if (!morador.bloco) erros.push("O bloco não pode estar vazio.");
+    if (!morador.apartamento) erros.push("O apartamento não pode estar vazio.");
+
+    if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
+    if (!morador.nacionalidade) erros.push("A nacionalidade deve ser selecionada.");
+
+    if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
+
+    return erros;
+}
+
+
+
+function exibiMensagensDeErro(erros) {
+	var ul = document.querySelector("#mensagens-erro")
+	ul.innerHTML = "";
+
+	erros.forEach(function (erro) {
+
+		var li = document.createElement("li")
+		li.textContent = erro;
+		ul.appendChild(li);
+	});
+}
+
+// MASCARAS AUTOMATICAS
+document.addEventListener("DOMContentLoaded", function () {
+	// CPF	
+    var inputCPF = document.querySelector('input[name="cpf"]');
+    if (inputCPF) {
+        inputCPF.addEventListener('input', function (e) {
+            let value = e.target.value;
+
+            // Remove tudo que não for número
+            value = value.replace(/\D/g, '');
+
+            // Aplica a máscara: xxx.xxx.xxx-xx
+            if (value.length > 3) value = value.replace(/^(\d{3})(\d)/, '$1.$2');
+            if (value.length > 6) value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+            if (value.length > 9) value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+
+            e.target.value = value;
+        });
+    }
+
+	// TELEFONE
+    const telefoneInput = document.querySelector('input[name="telefone"]');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            if (value.length > 6) value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value.slice(0, 15);
+        });
+    }
+
+    // RG
+    const rgInput = document.querySelector('input[name="rg"]');
+    if (rgInput) {
+        rgInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            if (value.length > 5) value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            if (value.length > 8) value = value.replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
+            e.target.value = value.slice(0, 12);
+        });
+    }
+
+    // DATA
+    const dataInput = document.querySelector('input[name="nascimento"]');
+    if (dataInput) {
+        dataInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) value = value.replace(/^(\d{2})(\d)/, '$1/$2');
+            if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+            e.target.value = value.slice(0, 10);
+        });
+    }
+});
