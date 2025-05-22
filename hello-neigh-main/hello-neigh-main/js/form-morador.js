@@ -31,6 +31,23 @@ function adicionaMoradorNaTabela(morador) {
 	var tabela = document.querySelector("#tabela-moradores");
 	tabela.appendChild(moradorTr);
 
+    // Envia o morador para o backend
+fetch('http://localhost:3000/moradores', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(morador)
+})
+.then(res => res.json())
+.then(data => {
+    console.log('Morador salvo no MongoDB:', data);
+})
+.catch(err => {
+    console.error('Erro ao salvar no MongoDB:', err);
+});
+
+
 }
 
 function obtemMoradorDoFormulario(form) {
@@ -88,14 +105,16 @@ function validaMorador(morador) {
 	//morador.cpf.replace(/\D/g, ''): remove pontuação do CPF para validar somente números.
 
     if (!morador.rg) erros.push("O RG não pode estar vazio.");
-    if (!/^\d+$/.test(morador.rg)) erros.push("O RG deve conter apenas números.");
+    if (!/^\d+$/.test(morador.rg.replace(/\D/g, ''))) erros.push("O RG deve conter apenas números.");
 
     if (!morador.telefone) erros.push("O telefone não pode estar vazio.");
 
     if (!morador.bloco) erros.push("O bloco não pode estar vazio.");
+
     if (!morador.apartamento) erros.push("O apartamento não pode estar vazio.");
 
     if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
+    
     if (!morador.nacionalidade) erros.push("A nacionalidade deve ser selecionada.");
 
     if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
@@ -170,4 +189,18 @@ document.addEventListener("DOMContentLoaded", function () {
             e.target.value = value.slice(0, 10);
         });
     }
+});
+
+//Buscar moradores para a tabela
+document.addEventListener("DOMContentLoaded", function () {
+  fetch('http://localhost:3000/moradores')
+    .then(res => res.json())
+    .then(moradores => {
+      moradores.forEach(morador => {
+        adicionaMoradorNaTabela(morador);
+      });
+    })
+    .catch(err => {
+      console.error("Erro ao buscar moradores:", err);
+    });
 });
