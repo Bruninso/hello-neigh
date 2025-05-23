@@ -47,22 +47,22 @@
       <ul id="mensagens-erro"></ul>
       <form id="form-adiciona">
         <div class="">
-          <label for="nome" class="fs-5 text-uppercase">Nome Completo</label>
+          <label for="nome" class="fs-5 text-uppercase">Nome Completo *</label>
           <input id="nome" name="nome" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="cpf" class="fs-5 text-uppercase">CPF</label>
+          <label for="cpf" class="fs-5 text-uppercase">CPF *</label>
           <input id="cpf" name="cpf" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="rg" class="fs-5 text-uppercase">RG</label>
+          <label for="rg" class="fs-5 text-uppercase">RG *</label>
           <input id="rg" name="rg" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="sexo" class="fs-5 text-uppercase">Sexo</label>
+          <label for="sexo" class="fs-5 text-uppercase">Sexo *</label>
           <select id="sexo" name="sexo" class="campo campo-medio">
             <option selected="selected" value="">Selecione uma opção</option>
             <option value="Feminino">Feminino</option>
@@ -72,7 +72,7 @@
         </div>
 
         <div class="grupo">
-          <label for="nacionalidade" class="fs-5 text-uppercase">Nacionalidade</label>
+          <label for="nacionalidade" class="fs-5 text-uppercase">Nacionalidade *</label>
           <select id="nacionalidade" name="nacionalidade" class="campo campo-medio">
             <option selected="selected" value="">Selecione uma opção</option>
             <option value="12">Brasileiro(a)</option>
@@ -271,22 +271,22 @@
         </div>
 
         <div class="grupo">
-          <label for="nascimento" class="fs-5 text-uppercase">Data de Nascimento</label>
+          <label for="nascimento" class="fs-5 text-uppercase">Data de Nascimento *</label>
           <input id="nascimento" name="nascimento" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="bloco" class="fs-5 text-uppercase">Bloco</label>
+          <label for="bloco" class="fs-5 text-uppercase">Bloco *</label>
           <input id="bloco" name="bloco" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="apartamento" class="fs-5 text-uppercase">Apartamento</label>
+          <label for="apartamento" class="fs-5 text-uppercase">Apartamento *</label>
           <input id="apartamento" name="apartamento" type="text"  class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="telefone" class="fs-5 text-uppercase">Telefone</label>
+          <label for="telefone" class="fs-5 text-uppercase">Telefone *</label>
           <input id="telefone" name="telefone" type="text" class="campo campo-medio">
         </div>
 
@@ -294,6 +294,7 @@
         <button id="adicionar-morador" class="botao bto-principal fs-5 text-uppercase btn-primary">Adicionar
           Morador</button>
       </form>
+      <p class="mt-2 text-muted"><small>* Campos obrigatórios</small></p>
     </section>
 
     <section class="container mt-3">
@@ -303,8 +304,8 @@
           <tr>
             <th>Nome</th>
             <th>CPF </th>
-            <th>Telefone </th>
             <th>RG </th>
+            <th>Telefone </th>
             <th>Bloco </th>
             <th>Apartamento </th>
             <th>Sexo </th>

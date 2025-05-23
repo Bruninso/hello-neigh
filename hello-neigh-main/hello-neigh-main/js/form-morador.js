@@ -1,97 +1,109 @@
 var botaoAdicionar = document.querySelector("#adicionar-morador");
+let moradoresCadastrados = [];
+
 
 botaoAdicionar.addEventListener("click", function (event) {
-	event.preventDefault();
+    event.preventDefault();
+    
+    var form = document.querySelector("#form-adiciona");
 
+    // extrai informacoes do morador
+    var morador = obtemMoradorDoFormulario(form);
 
+    var erros = validaMorador(morador);
 
-	var form = document.querySelector("#form-adiciona");
+    if (erros.length > 0) {
+        exibiMensagensDeErro(erros)
+        return
+    }
 
-	// extrai informacoes do morador
-	var morador = obtemMoradorDoFormulario(form);
+    // Verificação de CPF e RG duplicados
+    const cpfRepetido = moradoresCadastrados.some(m => m.cpf === morador.cpf);
+    const rgRepetido = moradoresCadastrados.some(m => m.rg === morador.rg);
 
-	var erros = validaMorador(morador);
+    if (cpfRepetido || rgRepetido) {
+        let errosDuplicados = [];
+        if (cpfRepetido) errosDuplicados.push("Já existe um morador com esse CPF.");
+        if (rgRepetido) errosDuplicados.push("Já existe um morador com esse RG.");
+        exibiMensagensDeErro(errosDuplicados);
+        return;
+    }
 
-	if (erros.length > 0) {
-		exibiMensagensDeErro(erros)
+    // aciciona o morador na tabela
+    adicionaMoradorNaTabela(morador)
 
-		return
-	}
-	// aciciona o morador na tabela
-	adicionaMoradorNaTabela(morador)
-
-	form.reset();
-	var mensagensDeErro = document.querySelector("#mensagens-erro");
-	mensagensDeErro.innerHTML = "";
+    form.reset();
+    var mensagensDeErro = document.querySelector("#mensagens-erro");
+    mensagensDeErro.innerHTML = "";
 
 });
 
 function adicionaMoradorNaTabela(morador) {
-	var moradorTr = montaTr(morador);
-	var tabela = document.querySelector("#tabela-moradores");
-	tabela.appendChild(moradorTr);
+    var moradorTr = montaTr(morador);
+    var tabela = document.querySelector("#tabela-moradores");
+    tabela.appendChild(moradorTr);
 
     // Envia o morador para o backend
-fetch('http://localhost:3000/moradores', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(morador)
-})
-.then(res => res.json())
-.then(data => {
-    console.log('Morador salvo no MongoDB:', data);
-})
-.catch(err => {
-    console.error('Erro ao salvar no MongoDB:', err);
-});
+    fetch('http://localhost:3000/moradores', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(morador)
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Morador salvo no MongoDB:', data);
+        })
+        .catch(err => {
+            console.error('Erro ao salvar no MongoDB:', err);
+        });
 
 
 }
 
 function obtemMoradorDoFormulario(form) {
-	var morador = {
-		nome: form.nome.value,
-		cpf: form.cpf.value,
-		rg: form.rg.value,
-		telefone: form.telefone.value,
-		bloco: form.bloco.value,
-		apartamento: form.apartamento.value,
-		sexo: form.sexo.value,
-		nacionalidade: form.nacionalidade.options[form.nacionalidade.selectedIndex].text,
-		//pegar o texto visivel entre os options, sem necessidade de reescrever o value de todas as opções 
-		nascimento: form.nascimento.value
-	}
+    var morador = {
+        nome: form.nome.value,
+        cpf: form.cpf.value,
+        rg: form.rg.value,
+        telefone: form.telefone.value,
+        bloco: form.bloco.value,
+        apartamento: form.apartamento.value,
+        sexo: form.sexo.value,
+        nacionalidade: form.nacionalidade.options[form.nacionalidade.selectedIndex].text,
+        //pegar o texto visivel entre os options, sem necessidade de reescrever o value de todas as opções 
+        nascimento: form.nascimento.value
+    }
 
-	return morador;
+    return morador;
 }
 
 function montaTr(morador) {
 
-	var moradorTr = document.createElement("tr");
-	moradorTr.classList.add("morador");
+    var moradorTr = document.createElement("tr");
+    moradorTr.classList.add("morador");
 
-	moradorTr.appendChild(montaTd(morador.nome, "info-nome"));
-	moradorTr.appendChild(montaTd(morador.cpf, "info-cpf"));
-	moradorTr.appendChild(montaTd(morador.rg, "info-rg"));
-	moradorTr.appendChild(montaTd(morador.telefone, "info-tel"));
-	moradorTr.appendChild(montaTd(morador.bloco, "info-bloco"));
-	moradorTr.appendChild(montaTd(morador.apartamento, "info-apt"));
-	moradorTr.appendChild(montaTd(morador.sexo, "info-sexo"));
-	moradorTr.appendChild(montaTd(morador.nacionalidade, "info-pais"));
-	moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
+    moradorTr.appendChild(montaTd(morador.nome, "info-nome"));
+    moradorTr.appendChild(montaTd(morador.cpf, "info-cpf"));
+    moradorTr.appendChild(montaTd(morador.rg, "info-rg"));
+    moradorTr.appendChild(montaTd(morador.telefone, "info-tel"));
+    moradorTr.appendChild(montaTd(morador.bloco, "info-bloco"));
+    moradorTr.appendChild(montaTd(morador.apartamento, "info-apt"));
+    moradorTr.appendChild(montaTd(morador.sexo, "info-sexo"));
+    moradorTr.appendChild(montaTd(morador.nacionalidade, "info-pais"));
+    moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
 
-	return moradorTr
+    return moradorTr
 }
 
 function montaTd(dado, classe) {
 
-	var Td = document.createElement("td");
-	Td.textContent = dado;
-	Td.classList.add(classe);
+    var Td = document.createElement("td");
+    Td.textContent = dado;
+    Td.classList.add(classe);
 
-	return Td;
+    return Td;
 }
 
 function validaMorador(morador) {
@@ -102,7 +114,7 @@ function validaMorador(morador) {
 
     if (!morador.cpf) erros.push("O CPF não pode estar vazio.");
     if (!/^\d{11}$/.test(morador.cpf.replace(/\D/g, ''))) erros.push("O CPF deve conter 11 dígitos numéricos.");
-	//morador.cpf.replace(/\D/g, ''): remove pontuação do CPF para validar somente números.
+    //morador.cpf.replace(/\D/g, ''): remove pontuação do CPF para validar somente números.
 
     if (!morador.rg) erros.push("O RG não pode estar vazio.");
     if (!/^\d+$/.test(morador.rg.replace(/\D/g, ''))) erros.push("O RG deve conter apenas números.");
@@ -114,7 +126,7 @@ function validaMorador(morador) {
     if (!morador.apartamento) erros.push("O apartamento não pode estar vazio.");
 
     if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
-    
+
     if (!morador.nacionalidade) erros.push("A nacionalidade deve ser selecionada.");
 
     if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
@@ -125,20 +137,20 @@ function validaMorador(morador) {
 
 
 function exibiMensagensDeErro(erros) {
-	var ul = document.querySelector("#mensagens-erro")
-	ul.innerHTML = "";
+    var ul = document.querySelector("#mensagens-erro")
+    ul.innerHTML = "";
 
-	erros.forEach(function (erro) {
+    erros.forEach(function (erro) {
 
-		var li = document.createElement("li")
-		li.textContent = erro;
-		ul.appendChild(li);
-	});
+        var li = document.createElement("li")
+        li.textContent = erro;
+        ul.appendChild(li);
+    });
 }
 
 // MASCARAS AUTOMATICAS
 document.addEventListener("DOMContentLoaded", function () {
-	// CPF	
+    // CPF	
     var inputCPF = document.querySelector('input[name="cpf"]');
     if (inputCPF) {
         inputCPF.addEventListener('input', function (e) {
@@ -156,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-	// TELEFONE
+    // TELEFONE
     const telefoneInput = document.querySelector('input[name="telefone"]');
     if (telefoneInput) {
         telefoneInput.addEventListener('input', function (e) {
@@ -193,14 +205,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Buscar moradores para a tabela
 document.addEventListener("DOMContentLoaded", function () {
-  fetch('http://localhost:3000/moradores')
-    .then(res => res.json())
-    .then(moradores => {
-      moradores.forEach(morador => {
-        adicionaMoradorNaTabela(morador);
-      });
-    })
-    .catch(err => {
-      console.error("Erro ao buscar moradores:", err);
-    });
+    fetch('http://localhost:3000/moradores')
+        .then(res => res.json())
+        .then(moradores => {
+            moradoresCadastrados = moradores;
+            moradores.forEach(morador => {
+                adicionaMoradorNaTabela(morador);
+            });
+        })
+        .catch(err => {
+            console.error("Erro ao buscar moradores:", err);
+        });
 });

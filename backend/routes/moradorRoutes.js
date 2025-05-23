@@ -13,10 +13,22 @@ router.post('/', async (req, res) => {
     await novoMorador.save();
     res.status(201).json({ mensagem: 'Morador salvo com sucesso' });
   } catch (err) {
+    // Erro de campos obrigatórios faltando (validação do Mongoose)
+    if (err.name === 'ValidationError') {
+      const mensagens = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ erro: 'Dados inválidos', mensagens });
+    }
+
+    // Erro de duplicidade (CPF ou RG)
+    if (err.code === 11000) {
+      const campo = Object.keys(err.keyValue)[0];
+      return res.status(409).json({ erro: `Já existe um morador com esse ${campo}.` });
+    }
+    //Erros inesperados
     console.error('Erro ao salvar no MongoDB', err);
     res.status(500).json({ erro: 'Erro ao salvar morador', detalhe: err });
   }
-});
+}); 
 
 //GET
 router.get('/', async (req, res) => {
