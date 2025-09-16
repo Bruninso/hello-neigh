@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const moradorRoutes = require('./routes/moradorRoutes');
+const visitanteRoutes = require('./routes/visitanteRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -9,6 +10,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 app.use('/moradores', moradorRoutes);
+app.use('/visitantes', visitanteRoutes);
 
 mongoose.connect('mongodb://localhost:27017/helloNeighDB', {
   useNewUrlParser: true,

@@ -29,30 +29,30 @@ Desenvolver uma aplicação web para facilitar a administração de um condomín
 Como rodar o projeto
 
 1. Clone o repositório
-
+```
 git clone https://github.com/Bruniso/hello-neigh.git
 cd hello-neigh
-
+```
 2. Instale as dependências do backend
-
+```
 npm install
-
+```
 3. Inicie o MongoDB
 
 Certifique-se de que o MongoDB está rodando localmente na porta 27017. Caso não esteja, execute:
-
+```
 mongod
-
+```
 Ou configure outro diretório com --dbpath se necessário.
 
 4. Inicie o servidor Express
-
-node serve.js
-
+```
+node server.js
+```
 Se tudo estiver certo, você verá:
-
+```
 Conectado ao MongoDB
-
+```
 Servidor rodando na porta 3000
 
 5. Acesse a interface
