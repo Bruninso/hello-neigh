@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Neighbour</title>
+    <!--link rel="icon" href="src/img/icone.jpg"-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/Tabela.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://kit.fontawesome.com/7291c7ba47.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <header class="nav-titulo">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
+            <div class="container-fluid">
+                <a class="navbar-brand fonte-titulo cor-especial" href="index.html">Hello Neighbour</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end nav-hover" id="navbarNavAltMarkup">
+                    <ul class="navbar-nav">
+                        <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
+
+                        <li><a class="nav-link" href="index.html#meus-condominios">Condominios</a></li>
+                        <li><a class="nav-link" href="/comunidade/comunidade.html">Comunidade</a></li>
+                        <li><a class="nav-link" data-bs-toggle="modal" data-bs-target="#modal-Contato"
+                                href="#">Notificações</a>
+                        </li>
+                        <li><a class="nav-link" href="#">Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="container mt-3">
+            <h2 id="titulo-form" class="nav-titulo">Cadastro de Pet</h2>
+            <ul id="mensagens-erro"></ul>
+            <form id="form-adiciona">
+                <div class="">
+                    <label for="nome" class="fs-5 text-uppercase">Nome do Pet *</label>
+                    <input id="nome" name="nome" type="text" class="campo" placeholder="Digite o nome do pet">
+                </div>
+
+                <div class="grupo">
+                    <label for="tipo" class="fs-5 text-uppercase">Tipo *</label>
+                    <select id="tipo" name="tipo" class="campo campo-medio">
+                        <option value="">Selecione uma opção</option>
+                        <option value="cachorro">Cachorro</option>
+                        <option value="gato">Gato</option>
+                        <option value="ave">Ave</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="grupo">
+                    <label for="raca" class="fs-5 text-uppercase">Raça</label>
+                    <input id="raca" name="raca" type="text" class="campo campo-medio" placeholder="Ex: Poodle">
+                </div>
+
+                <div class="grupo">
+                    <label for="porte" class="fs-5 text-uppercase">Porte</label>
+                    <select id="porte" name="porte" class="campo campo-medio">
+                        <option value="">Selecione uma opção</option>
+                        <option value="pequeno">Pequeno</option>
+                        <option value="medio">Médio</option>
+                        <option value="grande">Grande</option>
+                    </select>
+                </div>
+
+                <div class="grupo">
+                    <label for="cor" class="fs-5 text-uppercase">Cor</label>
+                    <input id="cor" name="cor" type="text" class="campo campo-medio" placeholder="Ex: Preto">
+                </div>
+
+                <div class="grupo">
+                    <label for="dataNascimento" class="fs-5 text-uppercase">Data de Nascimento (Aprox.)</label>
+                    <input id="dataNascimento" name="dataNascimento" type="text" class="campo campo-medio"
+                        placeholder="DD/MM/AAAA">
+                </div>
+
+                <div class="grupo">
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" id="vacinado" name="vacinado" value="true">
+                        <label class="form-check-label" for="vacinado">Vacinado</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="castrado" name="castrado" value="true">
+                        <label class="form-check-label" for="castrado">Castrado</label>
+                    </div>
+                </div>
+
+                <div class="grupo">
+                    <label for="observacoes" class="fs-5 text-uppercase">Observações</label>
+                    <textarea id="observacoes" name="observacoes" class="campo" rows="3"
+                        placeholder="Observações sobre o pet"></textarea>
+                </div>
+
+                <div class="grupo">
+                    <label for="moradorResponsavel" class="fs-5 text-uppercase">Morador Responsável *</label>
+                    <input id="moradorResponsavel" name="moradorResponsavel" type="text" class="campo campo-medio"
+                        placeholder="Nome do morador">
+                </div>
+
+                <div class="grupo">
+                    <label for="imagem-pet" class="fs-5 text-uppercase">Imagem do Pet</label>
+                    <input type="file" id="imagem-pet" name="imagem" accept="image/*" class="campo campo-medio">
+                    <div id="preview-imagem-pet" class="image-preview mt-2">
+                        <div class="text-muted">Nenhuma imagem selecionada</div>
+                    </div>
+                </div>
+
+                <div id="bloco-apartamento-container"></div>
+
+                <button id="adicionar-pet" class="btn-primary botao bto-principal fs-5 text-uppercase">Cadastrar
+                    Pet</button>
+            </form>
+        </section>
+
+        <section class="container mt-3">
+            <h2>Pets Cadastrados</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Raça</th>
+                        <th>Porte</th>
+                        <th>Cor</th>
+                        <th>Vacinado</th>
+                        <th>Castrado</th>
+                        <th>Bloco</th>
+                        <th>Apartamento</th>
+                        <th>Responsável</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-pets"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="js/components/bloco-apartamento.js"></script>
+  <script src="js/components/image-upload.js"></script>
+  <script src="js/utils/notifications.js"></script>
+  <script src="js/form-pet.js"></script>
+
+</body>
+
+</html>

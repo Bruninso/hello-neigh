@@ -45,7 +45,6 @@
       <h2 id="titulo-form" class="nav-titulo">Cadastro de Visitante</h2>
       <ul id="mensagens-erro"></ul>
       <form id="form-adiciona">
-
         <div class="">
           <label for="nome" class="fs-5 text-uppercase">Nome do Visitante:</label>
           <input id="nome" name="nome" type="text" placeholder="digite o nome do visitante" class="campo">
@@ -53,8 +52,7 @@
 
         <div class="grupo">
           <label for="visitado" class="fs-5 text-uppercase">Nome do Morador:</label>
-          <input id="visitado" name="visitado" type="text" placeholder="digite o nome do morador"
-            class="campo campo-medio">
+          <input id="visitado" name="visitado" type="text" placeholder="digite o nome do morador" class="campo campo-medio">
         </div>
 
         <div class="grupo">
@@ -62,21 +60,8 @@
           <input id="cpf" name="cpf" type="text" placeholder="digite o cpf do visitante" class="campo campo-medio">
         </div>
 
-        <div class="grupo">
-          <label for="ap" class="fs-5 text-uppercase">Apartamento:</label>
-          <input id="ap" name="ap" type="text" placeholder="digite o N° do apartamento"
-            class="campo campo-medio">
-        </div>
-
-        <div class="grupo">
-          <label for="bloco" class="fs-5 text-uppercase">Bloco *</label>
-          <select id="bloco" name="bloco" class="campo campo-medio">
-            <option selected="selected" value="">Selecione uma opção</option>
-            <option value="A">Bloco A</option>
-            <option value="B">Bloco B</option>
-            <option value="C">Bloco C</option>
-          </select>
-        </div>
+        <!-- Componente Bloco/Apartamento -->
+        <div id="bloco-apartamento-container"></div>
 
         <button id="adicionar-visitante" class="btn-primary botao bto-principal fs-5 text-uppercase">Adicionar</button>
       </form>
@@ -99,7 +84,10 @@
     </section>
   </main>
 
-  <script src="js/visitante-form.js"></script>
+  <script src="js/form-visitante.js"></script>
+  <script src="js/components/bloco-apartamento.js"></script>
+  <script src="js/utils/notifications.js"></script>
+
 </body>
 
 </html>

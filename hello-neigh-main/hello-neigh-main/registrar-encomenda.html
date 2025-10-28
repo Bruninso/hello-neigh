@@ -9,10 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="../css/reset.css">
-		<link rel="stylesheet" type="text/css" href="../css/Tabela.css">
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="css/reset.css">
+  <link rel="stylesheet" type="text/css" href="css/Tabela.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://kit.fontawesome.com/7291c7ba47.js" crossorigin="anonymous"></script>
 
 </head>
@@ -22,15 +23,16 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
       <div class="container-fluid">
         <a class="navbar-brand fonte-titulo cor-especial" href="index.html">Hello Neighbor</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end nav-hover" id="navbarNavAltMarkup">
           <ul class="navbar-nav">
             <li><a class="nav-link" aria-current="page" href="index.html">Início</a></li>
             <!-- <i class="fa-solid fa-file-pdf"></i> -->
-            <li><a class="nav-link"  href="index.html#meus-condominios">Condominios</a></li>
-            <li><a class="nav-link"  href="/comunidade/comunidade.html">Comunidade</a></li>
+            <li><a class="nav-link" href="index.html#meus-condominios">Condominios</a></li>
+            <li><a class="nav-link" href="/comunidade/comunidade.html">Comunidade</a></li>
             <li><a class="nav-link" data-bs-toggle="modal" data-bs-target="#modal-Contato" href="#">Contatos</a></li>
             <li><a class="nav-link" href="#">Sair</a></li>
           </ul>
@@ -40,104 +42,80 @@
   </header>
   <main>
     <section class="container mt-3">
-      <h2 class="nav-titulo">Registro de encomendas</h2>
-      
+      <h2 id="titulo-form" class="nav-titulo">Registro de Encomenda</h2>
+      <ul id="mensagens-erro"></ul>
+      <form id="form-adiciona">
+        <div class="">
+          <label for="entregarPara" class="fs-5 text-uppercase">Entregar para *</label>
+          <input id="entregarPara" name="entregarPara" type="text" placeholder="Nome do morador" class="campo">
+        </div>
+
+        <div class="grupo">
+          <label for="recebidaPor" class="fs-5 text-uppercase">Recebida por *</label>
+          <input id="recebidaPor" name="recebidaPor" type="text" placeholder="Quem recebeu a encomenda" class="campo campo-medio">
+        </div>
+
+        <div class="grupo">
+          <label for="transportadora" class="fs-5 text-uppercase">Transportadora</label>
+          <input id="transportadora" name="transportadora" type="text" placeholder="Nome da transportadora" class="campo campo-medio">
+        </div>
+
+        <div class="grupo">
+          <label for="codigoRastreio" class="fs-5 text-uppercase">Código de Rastreio</label>
+          <input id="codigoRastreio" name="codigoRastreio" type="text" placeholder="Código de rastreamento" class="campo campo-medio">
+        </div>
+
+        <div class="grupo">
+          <label for="bloco" class="fs-5 text-uppercase">Bloco *</label>
+          <select id="bloco" name="bloco" class="campo campo-medio">
+            <option value="">Selecione uma opção</option>
+            <option value="A">Bloco A</option>
+            <option value="B">Bloco B</option>
+            <option value="C">Bloco C</option>
+          </select>
+        </div>
+
+        <div class="grupo">
+          <label for="apartamento" class="fs-5 text-uppercase">Apartamento *</label>
+          <input id="apartamento" name="apartamento" type="text" class="campo campo-medio" placeholder="Número do apartamento">
+        </div>
+
+        <div class="grupo">
+          <label for="observacoes" class="fs-5 text-uppercase">Observações</label>
+          <textarea id="observacoes" name="observacoes" class="campo" rows="3" placeholder="Observações sobre a encomenda"></textarea>
+        </div>
+
+        <button id="adicionar-encomenda" class="btn-primary botao bto-principal fs-5 text-uppercase">Registrar Encomenda</button>
+      </form>
+    </section>
+
+    <section class="container mt-3">
+      <h2 class="nav-titulo">Encomendas Registradas</h2>
+      <div class="mb-3">
+        <button id="atualizar-lista" class="btn btn-info">Atualizar Lista</button>
+      </div>
       <table class="table table-hover">
         <thead class="table-dark">
           <tr>
-            <th>Status de Entrega</th>
+            <th>Status</th>
             <th>Entregar para</th>
             <th>Recebida por</th>
+            <th>Transportadora</th>
             <th>Bloco</th>
-            <th>Nº do AP</th>
-            <th>Data</th>
+            <th>Apartamento</th>
+            <th>Data Recebimento</th>
+            <th>Ações</th>
           </tr>
         </thead>
-        <tbody id="tabela-encomendas">
-          <tr class="encomenda" id="primeiro-encomenda">
-            <td class="table-success">ENTREGUE</td>
-            <td class="info-nome">Rodrigo</td>
-            <td class="info-recebido">Nayara</td>
-            <td class="info-bloco">Alo</td>
-            <td class="info-ap">2001</td>
-            <td class="info-dt">04/04</td>
-          </tr>
-
-          <tr class="encomenda" >
-            <td class="table-danger">NÃO ENTREGUE</td>
-            <td class="info-nome">Frisk</td>
-            <td class="info-recebido">Marisol</td>
-            <td class="info-bloco">Genocida</td>
-            <td class="info-ap">2015</td>
-            <td class="info-dt">SEM DATA</td>
-          </tr>
-
-          <tr class="encomenda" >
-            <td class="table-success">ENTREGUE</td>
-            <td class="info-nome">Rin</td>
-            <td class="info-recebido">Leticia</td>
-            <td class="info-bloco">Fate</td>
-            <td class="info-ap">2011</td>
-            <td class="info-dt">20/06</td>
-          </tr>
-
-          <tr class="encomenda">
-            <td class="table-danger">NÃO ENTREGUE</td>
-            <td class="info-nome">Kyle</td>
-            <td class="info-recebido">Jose</td>
-            <td class="info-bloco">Park</td>
-            <td class="info-ap">1997</td>
-            <td class="info-dt">SEM DATA</td>
-          </tr>
-          <tr class="encomenda" >
-            <td class="table-success">ENTREGUE</td>
-            <td class="info-nome">Bart</td>
-            <td class="info-recebido">Luis</td>
-            <td class="info-bloco">simpsons</td>
-            <td class="info-ap">1989</td>
-            <td class="info-dt">13/01</td>
-          </tr>
-        </tbody>
+        <tbody id="tabela-encomendas"></tbody>
       </table>
-      <span id="erro-ajax" class="invisivel">Erro ao Buscar os encomenda
-      </span>
-      <!-- <button id="buscar-encomenda" class="botao bto-principal">Buscar encomenda</button> -->
     </section>
   </main>
 
-  <section class="container mt-3">
-    <h2 id="titulo-form" class="nav-titulo">Adicionar nova encomenda</h2>
-    <ul id="mensagens-erro"></ul>
-    <form id="form-adiciona">
-      <div>
-        <label for="nome" class="fs-5 text-uppercase">encomenda para:</label>
-        <input id="nome" name="nome" type="text" placeholder="Entregar para" class="campo">
-      </div>
-      <div class="grupo">
-        <label for="recebido" class="fs-5 text-uppercase">nome do recebido:</label>
-        <input id="recebido" name="recebido" type="text" placeholder="recebido por " class="campo campo-medio">
-      </div>
-      <div class="grupo">
-        <label for="bloco" class="fs-5 text-uppercase">bloco:</label>
-        <input id="bloco" name="bloco" type="text" placeholder="digite o bloco" class="campo campo-medio ">
-      </div>
-      <div class="grupo">
-        <label for="ap" class="fs-5 text-uppercase">apartamento:</label>
-        <input id="ap" name="ap" type="text" placeholder="digite o n° do apartamento" class="campo campo-medio ">
-      </div>
-      <div class="grupo">
-        <label for="dt" class="fs-5 text-uppercase">data:</label>
-        <input id="dt" name="dt" type="text" placeholder="digite a data" class="campo campo-medio">
-      </div>
-  
-      <button id="adicionar-encomenda" class="botao bto-principal fs-4 text-uppercase btn-primary">Adicionar</button>
-    </form>
-  </section>
-  
-  <script src="js/encomenda/from-.js"></script>
-  <script src="js/encomenda/remover.js"></script>
-  <script src="js/encomenda/filtrar.js"></script>
-  <script src="js/encomenda/buscar.js"></script>
-</body>
-</html>
+  <script src="js/components/bloco-apartamento.js"></script>
+  <script src="js/utils/notifications.js"></script>
+  <script src="js/form-encomenda.js"></script>
 
+</body>
+
+</html>
