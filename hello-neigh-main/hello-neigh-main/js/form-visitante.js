@@ -1,5 +1,6 @@
 var botaoAdicionar = document.querySelector("#adicionar-visitante");
 let visitantesCadastrados = [];
+let blocoApartamentoComponent;
 
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
@@ -22,15 +23,6 @@ botaoAdicionar.addEventListener("click", function (event) {
 
     adicionaVisitanteNaTabela(visitante);
 
-    form.reset();
-    document.querySelector("#mensagens-erro").innerHTML = "";
-});
-
-function adicionaVisitanteNaTabela(visitante) {
-    var visitanteTr = montaTr(visitante);
-    var tabela = document.querySelector("#tabela-visitantes");
-    tabela.appendChild(visitanteTr);
-
     // Enviar visitante para backend
     fetch('http://localhost:3000/visitantes', {
         method: 'POST',
@@ -38,17 +30,32 @@ function adicionaVisitanteNaTabela(visitante) {
         body: JSON.stringify(visitante)
     })
     .then(res => res.json())
-    .then(data => console.log('Visitante salvo no MongoDB:', data))
-    .catch(err => console.error('Erro ao salvar visitante:', err));
+    .then(data => {
+        NotificationSystem.show('Visitante cadastrado com sucesso!', 'success');
+        form.reset();
+        document.querySelector("#mensagens-erro").innerHTML = "";
+    })
+    .catch(err => {
+        console.error('Erro ao salvar visitante:', err);
+        NotificationSystem.show('Erro ao cadastrar visitante', 'error');
+    });
+});
+
+function adicionaVisitanteNaTabela(visitante) {
+    var visitanteTr = montaTr(visitante);
+    var tabela = document.querySelector("#tabela-visitantes");
+    tabela.appendChild(visitanteTr);
 }
 
 function obtemVisitanteDoFormulario(form) {
+    const blocoApartamento = blocoApartamentoComponent.getValues();
+
     return {
         nome: form.nome.value,
         cpf: form.cpf.value,
         visitado: form.visitado.value,
-        bloco: form.bloco.value,
-        apartamento: form.ap.value
+        bloco: blocoApartamento.bloco,
+        apartamento: blocoApartamento.apartamento
     };
 }
 
@@ -103,6 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
             e.target.value = value;
         });
     }
+
+    // Inicializar componente de bloco e apartamento
+    blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
 
     // Buscar visitantes já cadastrados
     fetch('http://localhost:3000/visitantes')

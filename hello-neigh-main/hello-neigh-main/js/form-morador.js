@@ -1,10 +1,11 @@
 var botaoAdicionar = document.querySelector("#adicionar-morador");
 let moradoresCadastrados = [];
+let blocoApartamentoComponent;
 
 
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
-    
+
     var form = document.querySelector("#form-adiciona");
 
     // extrai informacoes do morador
@@ -53,26 +54,28 @@ function adicionaMoradorNaTabela(morador) {
     })
         .then(res => res.json())
         .then(data => {
-            console.log('Morador salvo no MongoDB:', data);
+            NotificationSystem.show('Morador cadastrado com sucesso!', 'success');
+            form.reset();
+            document.querySelector("#mensagens-erro").innerHTML = "";
         })
         .catch(err => {
             console.error('Erro ao salvar no MongoDB:', err);
+            NotificationSystem.show('Erro ao cadastrar morador', 'erro');
         });
-
 
 }
 
 function obtemMoradorDoFormulario(form) {
+    const blocoApartamento = blocoApartamentoComponent.getValues();
+
     var morador = {
         nome: form.nome.value,
         cpf: form.cpf.value,
         rg: form.rg.value,
         telefone: form.telefone.value,
-        bloco: form.bloco.value,
-        apartamento: form.apartamento.value,
+        bloco: blocoApartamento.bloco,
+        apartamento: blocoApartamento.apartamento,
         sexo: form.sexo.value,
-        nacionalidade: form.nacionalidade.options[form.nacionalidade.selectedIndex].text,
-        //pegar o texto visivel entre os options, sem necessidade de reescrever o value de todas as opções 
         nascimento: form.nascimento.value
     }
 
@@ -91,7 +94,6 @@ function montaTr(morador) {
     moradorTr.appendChild(montaTd(morador.bloco, "info-bloco"));
     moradorTr.appendChild(montaTd(morador.apartamento, "info-apt"));
     moradorTr.appendChild(montaTd(morador.sexo, "info-sexo"));
-    moradorTr.appendChild(montaTd(morador.nacionalidade, "info-pais"));
     moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
 
     return moradorTr
@@ -127,9 +129,8 @@ function validaMorador(morador) {
 
     if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
 
-    if (!morador.nacionalidade) erros.push("A nacionalidade deve ser selecionada.");
-
     if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(morador.nascimento)) erros.push("Data de nascimento deve estar no formato DD/MM/AAAA.");
 
     return erros;
 }
@@ -141,7 +142,6 @@ function exibiMensagensDeErro(erros) {
     ul.innerHTML = "";
 
     erros.forEach(function (erro) {
-
         var li = document.createElement("li")
         li.textContent = erro;
         ul.appendChild(li);
@@ -202,6 +202,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// Inicializar componente de bloco e apartamento
+blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
+
 
 //Buscar moradores para a tabela
 document.addEventListener("DOMContentLoaded", function () {
