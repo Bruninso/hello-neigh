@@ -8,8 +8,9 @@ const moradorSchema = new mongoose.Schema({
   bloco: { type: String, required: true },
   apartamento: { type: String, required: true },
   sexo: { type: String, required: true },
-  nacionalidade: { type: String, required: true },
-  nascimento: { type: Date, required: true }       
+  nascimento: { type: Date, required: true },
+  }, {
+  timestamps: true       
 });
 
 module.exports = mongoose.model('Morador', moradorSchema);

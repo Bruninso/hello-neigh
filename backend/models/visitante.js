@@ -6,7 +6,8 @@ const visitanteSchema = new mongoose.Schema({
   visitado: { type: String, required: true }, 
   bloco: { type: String, required: true },
   apartamento: { type: String, required: true },
-  dataRegistro: { type: Date, default: Date.now } 
+}, {
+  timestamps: true 
 });
 
 module.exports = mongoose.model('Visitante', visitanteSchema);
