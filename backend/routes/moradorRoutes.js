@@ -11,7 +11,10 @@ router.post('/', async (req, res) => {
 
     const novoMorador = new Morador(req.body);
     await novoMorador.save();
-    res.status(201).json({ mensagem: 'Morador salvo com sucesso' });
+    res.status(201).json({
+      mensagem: 'Morador salvo com sucesso',
+      morador: novoMorador
+    });
   } catch (err) {
     // Erro de campos obrigatórios faltando (validação do Mongoose)
     if (err.name === 'ValidationError') {
@@ -28,12 +31,18 @@ router.post('/', async (req, res) => {
     console.error('Erro ao salvar no MongoDB', err);
     res.status(500).json({ erro: 'Erro ao salvar morador', detalhe: err });
   }
-}); 
+});
 
 //GET
 router.get('/', async (req, res) => {
   try {
-    const moradores = await Morador.find();
+    const { bloco, apartamento } = req.query;
+    let filtro = {};
+    
+    if (bloco) filtro.bloco = bloco;
+    if (apartamento) filtro.apartamento = apartamento;
+
+    const moradores = await Morador.find(filtro).sort({ createdAt: -1 });
     res.json(moradores);
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao buscar moradores', detalhe: err });
