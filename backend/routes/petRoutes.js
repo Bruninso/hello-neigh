@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Pet = require('../models/pet.js');
-const upload = require('../utils/upload');
+//const upload = require('../utils/upload');
 
 // POST - cadastrar pet com imagem
-router.post('/', upload.single('imagem'), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const dadosPet = { ...req.body };
 
@@ -17,11 +17,6 @@ router.post('/', upload.single('imagem'), async (req, res) => {
     // Converter checkboxes para boolean
     dadosPet.vacinado = dadosPet.vacinado === 'true';
     dadosPet.castrado = dadosPet.castrado === 'true';
-
-    // Se há imagem, adiciona o caminho
-    if (req.file) {
-      dadosPet.imagem = `/uploads/${req.file.filename}`;
-    }
 
     const novoPet = new Pet(dadosPet);
     await novoPet.save();

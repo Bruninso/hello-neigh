@@ -55,7 +55,6 @@ function adicionaMoradorNaTabela(morador) {
         .then(res => res.json())
         .then(data => {
             NotificationSystem.show('Morador cadastrado com sucesso!', 'success');
-            form.reset();
             document.querySelector("#mensagens-erro").innerHTML = "";
         })
         .catch(err => {
@@ -130,7 +129,14 @@ function validaMorador(morador) {
     if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
 
     if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(morador.nascimento)) erros.push("Data de nascimento deve estar no formato DD/MM/AAAA.");
+    const data = new Date(morador.nascimento);
+    const hoje = new Date();
+    
+    if (isNaN(data.getTime())) {
+        erros.push("Data de nascimento inválida.");
+    } else if (data > hoje) {
+        erros.push("Data de nascimento não pode ser futura.");
+    }
 
     return erros;
 }
@@ -164,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (value.length > 6) value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
             if (value.length > 9) value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 
-            e.target.value = value;
+            e.target.value = value.slice(0,14);
         });
     }
 
@@ -191,16 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // DATA
-    const dataInput = document.querySelector('input[name="nascimento"]');
-    if (dataInput) {
-        dataInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 2) value = value.replace(/^(\d{2})(\d)/, '$1/$2');
-            if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
-            e.target.value = value.slice(0, 10);
-        });
-    }
+
 });
 
 // Inicializar componente de bloco e apartamento

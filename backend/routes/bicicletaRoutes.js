@@ -1,18 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Bicicleta = require('../models/bicicleta.js');
-const upload = require('../utils/upload');
+//const upload = require('../utils/upload');
 
 // POST - cadastrar bicicleta com imagem
-router.post('/', upload.single('imagem'), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    const dadosBicicleta = { ...req.body };
-
-    // Se há imagem, adiciona o caminho
-    if (req.file) {
-      dadosBicicleta.imagem = `/uploads/${req.file.filename}`;
-    }
-
     const novaBicicleta = new Bicicleta(dadosBicicleta);
     await novaBicicleta.save();
     

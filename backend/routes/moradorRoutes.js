@@ -5,9 +5,15 @@ const Morador = require('../models/morador.js');
 //POST
 router.post('/', async (req, res) => {
   try {
-    // Converter data de "dd/mm/yyyy" para formato ISO reconhecido
-    const [dia, mes, ano] = req.body.nascimento.split('/');
-    req.body.nascimento = new Date(`${ano}-${mes}-${dia}`);
+    let dataNascimento = req.body.nascimento;
+
+    if (dataNascimento.includes('/')) {
+      // dd/mm/yyyy → yyyy-mm-dd
+      const [dia, mes, ano] = dataNascimento.split('/');
+      dataNascimento = `${ano}-${mes}-${dia}`;
+    }
+
+    req.body.nascimento = new Date(dataNascimento);
 
     const novoMorador = new Morador(req.body);
     await novoMorador.save();
