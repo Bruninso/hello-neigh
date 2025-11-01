@@ -68,7 +68,7 @@ function obtemMoradorDoFormulario(form) {
     const blocoApartamento = blocoApartamentoComponent.getValues();
 
     var morador = {
-        nome: form.nome.value,
+        nomeMorador: form.nomeMorador.value,
         cpf: form.cpf.value,
         rg: form.rg.value,
         telefone: form.telefone.value,
@@ -86,7 +86,7 @@ function montaTr(morador) {
     var moradorTr = document.createElement("tr");
     moradorTr.classList.add("morador");
 
-    moradorTr.appendChild(montaTd(morador.nome, "info-nome"));
+    moradorTr.appendChild(montaTd(morador.nomeMorador, "info-nome"));
     moradorTr.appendChild(montaTd(morador.cpf, "info-cpf"));
     moradorTr.appendChild(montaTd(morador.rg, "info-rg"));
     moradorTr.appendChild(montaTd(morador.telefone, "info-tel"));
@@ -110,28 +110,36 @@ function montaTd(dado, classe) {
 function validaMorador(morador) {
     var erros = [];
 
-    if (!morador.nome) erros.push("O nome não pode estar vazio.");
-    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(morador.nome)) erros.push("O nome deve conter apenas letras.");
+    if (!morador.nomeMorador) erros.push("O nome não pode estar vazio.");
+    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(morador.nomeMorador)) erros.push("O nome deve conter apenas letras.");
 
     if (!morador.cpf) erros.push("O CPF não pode estar vazio.");
     if (!/^\d{11}$/.test(morador.cpf.replace(/\D/g, ''))) erros.push("O CPF deve conter 11 dígitos numéricos.");
     //morador.cpf.replace(/\D/g, ''): remove pontuação do CPF para validar somente números.
 
     if (!morador.rg) erros.push("O RG não pode estar vazio.");
-    if (!/^\d+$/.test(morador.rg.replace(/\D/g, ''))) erros.push("O RG deve conter apenas números.");
+    if (!/^\d{9}$/.test(morador.rg.replace(/\D/g, ''))) erros.push("O RG deve conter 9 dígitos numéricos.");
 
     if (!morador.telefone) erros.push("O telefone não pode estar vazio.");
+    if (!/^\d{11}$/.test(morador.telefone.replace(/\D/g, ''))) erros.push("O Telefone deve conter o DDD e o numero completo.");
 
     if (!morador.bloco) erros.push("O bloco não pode estar vazio.");
 
     if (!morador.apartamento) erros.push("O apartamento não pode estar vazio.");
+    else {
+        // Lista de apartamentos válidos
+        const apartamentosValidos = [10, 11, 12, 13, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 61, 62, 63, 71, 72, 73, 81, 82, 83, 91, 92, 93];
+        if (!apartamentosValidos.includes(parseInt(morador.apartamento))) {
+            erros.push("Apartamento inválido. Verifique a lista de apartamentos válidos.");
+        }
+    }
 
     if (!morador.sexo) erros.push("O sexo deve ser selecionado.");
 
     if (!morador.nascimento) erros.push("A data de nascimento não pode estar vazia.");
     const data = new Date(morador.nascimento);
     const hoje = new Date();
-    
+
     if (isNaN(data.getTime())) {
         erros.push("Data de nascimento inválida.");
     } else if (data > hoje) {
@@ -170,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (value.length > 6) value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
             if (value.length > 9) value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
 
-            e.target.value = value.slice(0,14);
+            e.target.value = value.slice(0, 14);
         });
     }
 

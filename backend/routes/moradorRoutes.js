@@ -15,6 +15,8 @@ router.post('/', async (req, res) => {
 
     req.body.nascimento = new Date(dataNascimento);
 
+    req.body.apartamento = parseInt(req.body.apartamento);
+
     const novoMorador = new Morador(req.body);
     await novoMorador.save();
     res.status(201).json({
