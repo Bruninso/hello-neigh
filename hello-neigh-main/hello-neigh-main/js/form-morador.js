@@ -154,15 +154,36 @@ function montaTr(morador) {
     moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
 
     // Coluna de ações
-    var tdAcoes = document.createElement("td");
-    tdAcoes.appendChild(montaBotaoEditar(morador));
-    tdAcoes.appendChild(montaBotaoExcluir(morador._id));
+    const tdAcoes = document.createElement("td");
+    tdAcoes.classList.add("text-center");
+
+    const dropdownDiv = document.createElement("div");
+    dropdownDiv.classList.add("dropdown");
+
+    const botaoAcoes = document.createElement("button");
+    botaoAcoes.classList.add("btn", "btn-secondary", "btn-sm", "dropdown-toggle");
+    botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+    botaoAcoes.innerHTML = `<i class="fas fa-ellipsis-v"></i>`;
+    dropdownDiv.appendChild(botaoAcoes);
+
+    const menu = document.createElement("ul");
+    menu.classList.add("dropdown-menu");
+    menu.innerHTML = `
+        <li><a class="dropdown-item editar" href="#">Editar</a></li>
+        <li><a class="dropdown-item excluir" href="#">Excluir</a></li>
+    `;
+    dropdownDiv.appendChild(menu);
+    tdAcoes.appendChild(dropdownDiv);
     moradorTr.appendChild(tdAcoes);
+
+    // Eventos dos botões do menu
+    menu.querySelector(".editar").addEventListener("click", () => editarMorador(morador));
+    menu.querySelector(".excluir").addEventListener("click", () => excluirMorador(morador._id));
 
     return moradorTr
 }
 
-function montaBotaoEditar(morador) {
+/*function montaBotaoEditar(morador) {
     var botaoEditar = document.createElement("button");
     botaoEditar.textContent = "Editar";
     botaoEditar.classList.add("btn", "btn-warning", "btn-sm", "me-1");
@@ -180,7 +201,7 @@ function montaBotaoExcluir(id) {
         excluirMorador(id);
     });
     return botaoExcluir;
-}
+}*/
 
 function editarMorador(morador) {
     // Preenche o formulário com os dados do morador

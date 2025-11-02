@@ -13,7 +13,7 @@ class BlocoApartamentoComponent {
                 <label for="bloco" class="fs-5 text-uppercase">Bloco *</label>
                 <select id="bloco" name="bloco" class="campo campo-medio" required>
                     <option value="">Selecione uma opção</option>
-                    <option value="A">Bloco Único</option>
+                    <option value="Unico">Bloco Único</option>
                 </select>
             </div>
             <div class="grupo">
