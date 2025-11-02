@@ -30,20 +30,6 @@ botaoAdicionar.addEventListener("click", function (event) {
         return;
     }
 
-    // aciciona o morador na tabela
-    adicionaMoradorNaTabela(morador)
-
-    form.reset();
-    var mensagensDeErro = document.querySelector("#mensagens-erro");
-    mensagensDeErro.innerHTML = "";
-
-});
-
-function adicionaMoradorNaTabela(morador) {
-    var moradorTr = montaTr(morador);
-    var tabela = document.querySelector("#tabela-moradores");
-    tabela.appendChild(moradorTr);
-
     // Envia o morador para o backend
     fetch('http://localhost:3000/moradores', {
         method: 'POST',
@@ -61,6 +47,22 @@ function adicionaMoradorNaTabela(morador) {
             console.error('Erro ao salvar no MongoDB:', err);
             NotificationSystem.show('Erro ao cadastrar morador', 'erro');
         });
+
+    // aciciona o morador na tabela
+    adicionaMoradorNaTabela(morador)
+
+    form.reset();
+    var mensagensDeErro = document.querySelector("#mensagens-erro");
+    mensagensDeErro.innerHTML = "";
+
+});
+
+function adicionaMoradorNaTabela(morador) {
+    var moradorTr = montaTr(morador);
+    var tabela = document.querySelector("#tabela-moradores");
+    tabela.appendChild(moradorTr);
+
+    
 
 }
 
