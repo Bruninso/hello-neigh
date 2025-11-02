@@ -1,6 +1,7 @@
 var botaoAdicionar = document.querySelector("#adicionar-morador");
 let moradoresCadastrados = [];
 let blocoApartamentoComponent;
+let editandoId = null;
 
 
 botaoAdicionar.addEventListener("click", function (event) {
@@ -18,52 +19,106 @@ botaoAdicionar.addEventListener("click", function (event) {
         return
     }
 
-    // Verificação de CPF e RG duplicados
-    const cpfRepetido = moradoresCadastrados.some(m => m.cpf === morador.cpf);
-    const rgRepetido = moradoresCadastrados.some(m => m.rg === morador.rg);
+    if (editandoId) {
+        // Atualizar morador existente
+        fetch(`http://localhost:3000/moradores/${editandoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(morador)
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('Morador atualizado com sucesso!', 'success');
+                // Atualiza a linha na tabela
+                const tr = document.querySelector(`tr[data-id="${editandoId}"]`);
+                if (tr) tr.remove();
+                adicionaMoradorNaTabela(data.morador); // Adiciona a versão atualizada
 
-    if (cpfRepetido || rgRepetido) {
-        let errosDuplicados = [];
-        if (cpfRepetido) errosDuplicados.push("Já existe um morador com esse CPF.");
-        if (rgRepetido) errosDuplicados.push("Já existe um morador com esse RG.");
-        exibiMensagensDeErro(errosDuplicados);
-        return;
+                // Reseta o formulário e o estado de edição
+                form.reset();
+                cancelarEdicao();
+            })
+            .catch(err => {
+                console.error('Erro ao atualizar morador:', err);
+                NotificationSystem.show('Erro ao atualizar morador', 'erro');
+            });
+    } else {
+
+        // Verificação de CPF e RG duplicados
+        const cpfRepetido = moradoresCadastrados.some(m => m.cpf === morador.cpf);
+        const rgRepetido = moradoresCadastrados.some(m => m.rg === morador.rg);
+
+        if (cpfRepetido || rgRepetido) {
+            let errosDuplicados = [];
+            if (cpfRepetido) errosDuplicados.push("Já existe um morador com esse CPF.");
+            if (rgRepetido) errosDuplicados.push("Já existe um morador com esse RG.");
+            exibiMensagensDeErro(errosDuplicados);
+            return;
+        }
+
+        // Envia o morador para o backend
+        fetch('http://localhost:3000/moradores', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(morador)
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('Morador cadastrado com sucesso!', 'success');
+                document.querySelector("#mensagens-erro").innerHTML = "";
+            })
+            .catch(err => {
+                console.error('Erro ao salvar no MongoDB:', err);
+                NotificationSystem.show('Erro ao cadastrar morador', 'erro');
+            });
+
+        // aciciona o morador na tabela
+        adicionaMoradorNaTabela(morador)
+
+        form.reset();
+        var mensagensDeErro = document.querySelector("#mensagens-erro");
+        mensagensDeErro.innerHTML = "";
     }
 
-    // Envia o morador para o backend
-    fetch('http://localhost:3000/moradores', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(morador)
-    })
-        .then(res => res.json())
-        .then(data => {
-            NotificationSystem.show('Morador cadastrado com sucesso!', 'success');
-            document.querySelector("#mensagens-erro").innerHTML = "";
-        })
-        .catch(err => {
-            console.error('Erro ao salvar no MongoDB:', err);
-            NotificationSystem.show('Erro ao cadastrar morador', 'erro');
-        });
-
-    // aciciona o morador na tabela
-    adicionaMoradorNaTabela(morador)
-
-    form.reset();
-    var mensagensDeErro = document.querySelector("#mensagens-erro");
-    mensagensDeErro.innerHTML = "";
-
 });
+
+// Função para cancelar edição (resetar o formulário)
+function cancelarEdicao() {
+    editandoId = null;
+    var botao = document.querySelector("#adicionar-morador");
+    botao.textContent = "Adicionar Morador";
+    botao.classList.remove("btn-success");
+    botao.classList.add("btn-primary");
+    document.querySelector("#form-adiciona").reset();
+}
+
+const botaoCancelar = document.querySelector("#cancelar-edicao");
+
+botaoCancelar.addEventListener("click", function() {
+    cancelarEdicao();
+    botaoCancelar.style.display = 'none';
+});
+
+// Na função editarMorador, mostrar o botão cancelar
+function editarMorador(morador) {
+    // ... preencher formulário ...
+    botaoCancelar.style.display = 'inline-block';
+}
+
+// Em cancelarEdicao, esconder o botão cancelar
+function cancelarEdicao() {
+    // ... resetar ...
+    botaoCancelar.style.display = 'none';
+}
 
 function adicionaMoradorNaTabela(morador) {
     var moradorTr = montaTr(morador);
     var tabela = document.querySelector("#tabela-moradores");
     tabela.appendChild(moradorTr);
-
-    
-
 }
 
 function obtemMoradorDoFormulario(form) {
@@ -87,6 +142,7 @@ function montaTr(morador) {
 
     var moradorTr = document.createElement("tr");
     moradorTr.classList.add("morador");
+    moradorTr.dataset.id = morador._id;
 
     moradorTr.appendChild(montaTd(morador.nomeMorador, "info-nome"));
     moradorTr.appendChild(montaTd(morador.cpf, "info-cpf"));
@@ -97,7 +153,79 @@ function montaTr(morador) {
     moradorTr.appendChild(montaTd(morador.sexo, "info-sexo"));
     moradorTr.appendChild(montaTd(morador.nascimento, "info-nasce"));
 
+    // Coluna de ações
+    var tdAcoes = document.createElement("td");
+    tdAcoes.appendChild(montaBotaoEditar(morador));
+    tdAcoes.appendChild(montaBotaoExcluir(morador._id));
+    moradorTr.appendChild(tdAcoes);
+
     return moradorTr
+}
+
+function montaBotaoEditar(morador) {
+    var botaoEditar = document.createElement("button");
+    botaoEditar.textContent = "Editar";
+    botaoEditar.classList.add("btn", "btn-warning", "btn-sm", "me-1");
+    botaoEditar.addEventListener("click", function () {
+        editarMorador(morador);
+    });
+    return botaoEditar;
+}
+
+function montaBotaoExcluir(id) {
+    var botaoExcluir = document.createElement("button");
+    botaoExcluir.textContent = "Excluir";
+    botaoExcluir.classList.add("btn", "btn-danger", "btn-sm");
+    botaoExcluir.addEventListener("click", function () {
+        excluirMorador(id);
+    });
+    return botaoExcluir;
+}
+
+function editarMorador(morador) {
+    // Preenche o formulário com os dados do morador
+    document.querySelector("#nomeMorador").value = morador.nomeMorador;
+    document.querySelector("#cpf").value = morador.cpf;
+    document.querySelector("#rg").value = morador.rg;
+    document.querySelector("#telefone").value = morador.telefone;
+    blocoApartamentoComponent.setValues(morador.bloco, morador.apartamento);
+    document.querySelector("#sexo").value = morador.sexo;
+
+    // Formata a data para o input type="date" (yyyy-mm-dd)
+    const data = new Date(morador.nascimento);
+    const dataFormatada = data.toISOString().split('T')[0];
+    document.querySelector("#nascimento").value = dataFormatada;
+
+    // Altera o botão para "Atualizar"
+    var botao = document.querySelector("#adicionar-morador");
+    botao.textContent = "Atualizar Morador";
+    botao.classList.remove("btn-primary");
+    botao.classList.add("btn-success");
+
+    // Define que estamos editando e qual o ID
+    editandoId = morador._id;
+
+    // Rola para o topo do formulário
+    window.scrollTo(0, 0);
+}
+
+function excluirMorador(id) {
+    if (confirm("Tem certeza que deseja excluir este morador?")) {
+        fetch(`http://localhost:3000/moradores/${id}`, {
+            method: 'DELETE'
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('Morador excluído com sucesso!', 'success');
+                // Remove a linha da tabela
+                const tr = document.querySelector(`tr[data-id="${id}"]`);
+                if (tr) tr.remove();
+            })
+            .catch(err => {
+                console.error('Erro ao excluir morador:', err);
+                NotificationSystem.show('Erro ao excluir morador', 'erro');
+            });
+    }
 }
 
 function montaTd(dado, classe) {
