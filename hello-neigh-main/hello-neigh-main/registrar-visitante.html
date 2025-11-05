@@ -46,24 +46,30 @@
       <ul id="mensagens-erro"></ul>
       <form id="form-adiciona">
         <div class="">
-          <label for="nome" class="fs-5 text-uppercase">Nome do Visitante:</label>
-          <input id="nome" name="nome" type="text" placeholder="digite o nome do visitante" class="campo">
+          <label for="nomeVisitante" class="fs-5 text-uppercase">Nome do Visitante:</label>
+          <input id="nomeVisitante" name="nomeVisitante" type="text" placeholder="digite o nome do visitante"
+            class="campo">
         </div>
 
         <div class="grupo">
-          <label for="visitado" class="fs-5 text-uppercase">Nome do Morador:</label>
-          <input id="visitado" name="visitado" type="text" placeholder="digite o nome do morador" class="campo campo-medio">
+          <label for="cpfVisitante" class="fs-5 text-uppercase">CPF do Visitante:</label>
+          <input id="cpfVisitante" name="cpfVisitante" type="text" placeholder="digite o cpf do visitante"
+            class="campo campo-medio">
         </div>
 
         <div class="grupo">
-          <label for="cpf" class="fs-5 text-uppercase">CPF do Visitante:</label>
-          <input id="cpf" name="cpf" type="text" placeholder="digite o cpf do visitante" class="campo campo-medio">
+          <label for="nomeMorador" class="fs-5 text-uppercase">Nome do Morador:</label>
+          <select id="nomeMorador" name="nomeMorador" class="campo campo-medio" required>
+            <option value="">Selecione um morador</option>
+          </select>
         </div>
 
         <!-- Componente Bloco/Apartamento -->
         <div id="bloco-apartamento-container"></div>
 
         <button id="adicionar-visitante" class="btn-primary botao bto-principal fs-5 text-uppercase">Adicionar</button>
+        <button id="cancelar-edicao" class="botao bto-secundario fs-5 text-uppercase btn-secondary"
+          style="display: none;">Cancelar</button>
       </form>
     </section>
 
@@ -73,10 +79,11 @@
         <thead>
           <tr>
             <th>Nome Visitante</th>
-            <th>CPF</th>
-            <th>Visitado</th>
+            <th>CPF Visitante</th>
+            <th>Morador</th>
             <th>Bloco</th>
-            <th>Apartamento</th>
+            <th>Apto</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody id="tabela-visitantes"></tbody>
@@ -84,9 +91,12 @@
     </section>
   </main>
 
-  <script src="js/form-visitante.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
   <script src="js/components/bloco-apartamento.js"></script>
   <script src="js/utils/notifications.js"></script>
+  <script src="js/form-visitante.js"></script>
 
 </body>
 

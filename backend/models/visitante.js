@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const visitanteSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  cpf: { type: String, required: true, unique: true },
-  visitado: { type: String, required: true }, 
+  nomeVisitante: { type: String, required: true },
+  cpfVisitante: { type: String, required: true, unique: true },
+  nomeMorador: { type: String, required: true }, 
   bloco: { type: String, required: true },
-  apartamento: { type: String, required: true },
+  apartamento: { type: Number, required: true },
 }, {
   timestamps: true 
 });
