@@ -1,7 +1,7 @@
 var botaoAdicionar = document.querySelector("#adicionar-encomenda");
-var botaoAtualizar = document.querySelector("#atualizar-lista");
 let encomendasCadastradas = [];
 let blocoApartamentoComponent;
+let editandoId = null;
 
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
@@ -15,31 +15,124 @@ botaoAdicionar.addEventListener("click", function (event) {
         return;
     }
 
-    adicionaEncomendaNaTabela(encomenda);
+    if (editandoId) {
+        // Atualizar encomenda existente
+        fetch(`http://localhost:3000/encomendas/${editandoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(encomenda)
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('Encomenda atualizado com sucesso!', 'success');
+                // Atualiza a linha na tabela
+                const tr = document.querySelector(`tr[data-id="${editandoId}"]`);
+                if (tr) tr.remove();
+                adicionaEncomendaNaTabela(data.encomenda); // Adiciona a versão atualizada
 
-    // Enviar encomenda para backend
-    fetch('http://localhost:3000/encomendas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(encomenda)
-    })
-    .then(res => res.json())
-    .then(data => {
-        NotificationSystem.show('Encomenda registrada com sucesso!', 'success');
-        form.reset();
-        document.querySelector("#mensagens-erro").innerHTML = "";
-        // Recarregar a tabela
-        setTimeout(() => carregarEncomendas(), 1000);
-    })
-    .catch(err => {
-        console.error('Erro ao salvar encomenda:', err);
-        NotificationSystem.show('Erro ao registrar encomenda', 'error');
-    });
+                // Reseta o formulário e o estado de edição
+                form.reset();
+                cancelarEdicao();
+            })
+            .catch(err => {
+                console.error('Erro ao atualizar encomenda:', err);
+                NotificationSystem.show('Erro ao atualizar encomenda', 'erro');
+            });
+    } else {
+        // Cadastrar nova encomenda
+        fetch('http://localhost:3000/encomendas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(encomenda)
+        })
+            .then(async res => {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error("❌ Erro do servidor:", data);
+                    throw new Error(data.mensagens ? data.mensagens.join(", ") : "Erro ao salvar encomenda");
+                }
+
+                NotificationSystem.show('Encomenda cadastrada com sucesso!', 'success');
+                document.querySelector("#mensagens-erro").innerHTML = "";
+                adicionaEncomendaNaTabela(data.encomenda); // agora só roda se realmente existir encomenda
+                form.reset();
+            })
+            .then(data => {
+                console.log("📦 Resposta recebida:", data);
+            })
+            .catch(err => {
+                console.error('Erro ao salvar encomenda:', err);
+                NotificationSystem.show(err.message || 'Erro ao cadastrar encomenda', 'error');
+            })
+
+
+        var mensagensDeErro = document.querySelector("#mensagens-erro");
+        mensagensDeErro.innerHTML = "";
+    }
 });
 
-// Atualizar lista de encomendas
-botaoAtualizar.addEventListener("click", function() {
-    carregarEncomendas();
+// Função para cancelar edição
+function cancelarEdicao() {
+    editandoId = null;
+    var botao = document.querySelector("#adicionar-encomenda");
+    botao.textContent = "Registrar Encomenda";
+    botao.classList.remove("btn-success");
+    botao.classList.add("btn-primary");
+    document.querySelector("#form-adiciona").reset();
+
+}
+
+const botaoCancelar = document.querySelector("#cancelar-edicao");
+botaoCancelar.addEventListener("click", function () {
+    cancelarEdicao();
+    botaoCancelar.style.display = 'none';
+
+});
+
+// Na função editarEncomenda, mostrar o botão cancelar
+function editarEncomenda(encomenda) {
+    // ... preencher formulário ...
+    botaoCancelar.style.display = 'inline-block';
+}
+
+// Em cancelarEdicao, esconder o botão cancelar
+function cancelarEdicao() {
+    // ... resetar ...
+    botaoCancelar.style.display = 'none';
+}
+
+function carregarMoradores() {
+    fetch('http://localhost:3000/moradores')
+        .then(res => res.json())
+        .then(moradores => {
+            const select = document.querySelector('#nomeMorador');
+            select.innerHTML = '<option value="">Selecione um morador</option>';
+
+            moradores.forEach(morador => {
+                const option = document.createElement('option');
+                option.value = morador.nomeMorador;
+                option.textContent = morador.nomeMorador;
+                // Armazenar bloco e apartamento como atributos personalizados
+                option.setAttribute('data-bloco', morador.bloco);
+                option.setAttribute('data-apartamento', morador.apartamento);
+                select.appendChild(option);
+            });
+        })
+        .catch(err => console.error("Erro ao carregar moradores:", err));
+}
+
+// Evento para preencher bloco e apartamento automaticamente
+document.querySelector('#nomeMorador').addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        const bloco = selectedOption.getAttribute('data-bloco');
+        const apartamento = selectedOption.getAttribute('data-apartamento');
+        // Preencher os campos de bloco e apartamento
+        blocoApartamentoComponent.setValues(bloco, apartamento);
+    }
 });
 
 function adicionaEncomendaNaTabela(encomenda) {
@@ -52,63 +145,95 @@ function obtemEncomendaDoFormulario(form) {
     const blocoApartamento = blocoApartamentoComponent.getValues();
 
     return {
-        entregarPara: form.entregarPara.value,
+        nomeMorador: form.nomeMorador.value,
         recebidaPor: form.recebidaPor.value,
         transportadora: form.transportadora.value,
-        codigoRastreio: form.codigoRastreio.value,
-        observacoes: form.observacoes.value,
         bloco: blocoApartamento.bloco,
-        apartamento: blocoApartamento.apartamento,
-        status: 'RECEBIDA'
+        apartamento: blocoApartamento.apartamento
     };
 }
 
 function montaTr(encomenda) {
-    var tr = document.createElement("tr");
-    
-    const statusTd = montaTd(formatarStatus(encomenda.status), "info-status");
-    statusTd.className += ` ${getStatusClass(encomenda.status)}`;
-    tr.appendChild(statusTd);
-    
-    tr.appendChild(montaTd(encomenda.entregarPara, "info-entregar-para"));
-    tr.appendChild(montaTd(encomenda.recebidaPor, "info-recebida-por"));
-    tr.appendChild(montaTd(encomenda.transportadora || '-', "info-transportadora"));
-    tr.appendChild(montaTd(encomenda.bloco, "info-bloco"));
-    tr.appendChild(montaTd(encomenda.apartamento, "info-apartamento"));
-    tr.appendChild(montaTd(formatarData(new Date()), "info-data"));
-    
-    // Botões de ação
-    const acoesTd = document.createElement("td");
-    acoesTd.innerHTML = `
-        <button class="btn btn-sm btn-success btn-entregar" data-id="${encomenda._id || ''}">
-            Marcar Entregue
-        </button>
+    var encomendaTr = document.createElement("tr");
+    encomendaTr.classList.add("encomenda");
+    encomendaTr.dataset.id = encomenda._id;
+
+
+    encomendaTr.appendChild(montaTd(encomenda.nomeMorador, "info-morador"));
+    encomendaTr.appendChild(montaTd(encomenda.recebidaPor, "info-recebida-por"));
+    encomendaTr.appendChild(montaTd(encomenda.transportadora, "info-transportadora"));
+    encomendaTr.appendChild(montaTd(encomenda.bloco, "info-bloco"));
+    encomendaTr.appendChild(montaTd(encomenda.apartamento, "info-ap"));
+    encomendaTr.appendChild(montaTd(encomenda.createdAt, "info-data"));
+
+    // Coluna de ações
+    const tdAcoes = document.createElement("td");
+    tdAcoes.classList.add("text-center");
+
+    const dropdownDiv = document.createElement("div");
+    dropdownDiv.classList.add("dropdown");
+
+    const botaoAcoes = document.createElement("button");
+    botaoAcoes.classList.add("btn", "btn-secondary", "btn-sm", "dropdown-toggle");
+    botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+    botaoAcoes.innerHTML = `<i class="fas fa-ellipsis-v"></i>`;
+    dropdownDiv.appendChild(botaoAcoes);
+
+    const menu = document.createElement("ul");
+    menu.classList.add("dropdown-menu");
+    menu.innerHTML = `
+        <li><a class="dropdown-item editar" href="#">Editar</a></li>
+        <li><a class="dropdown-item excluir" href="#">Excluir</a></li>
     `;
-    tr.appendChild(acoesTd);
+    dropdownDiv.appendChild(menu);
+    tdAcoes.appendChild(dropdownDiv);
+    encomendaTr.appendChild(tdAcoes);
 
-    return tr;
+    menu.querySelector(".editar").addEventListener("click", () => editarEncomenda(encomenda));
+    menu.querySelector(".excluir").addEventListener("click", () => excluirEncomenda(encomenda._id));
+
+
+    return encomendaTr;
 }
 
-function formatarStatus(status) {
-    const statusMap = {
-        'RECEBIDA': 'Recebida',
-        'ENTREGUE': 'Entregue',
-        'DEVOLVIDA': 'Devolvida'
-    };
-    return statusMap[status] || status;
+function editarEncomenda(encomenda) {
+    // Preenche o formulário com os dados da encomenda
+    document.querySelector("#nomeMorador").value = encomenda.nomeMorador;
+    document.querySelector("#recebidaPor").value = encomenda.recebidaPor;
+    document.querySelector("#transportadora").value = encomenda.transportadora;
+    blocoApartamentoComponent.setValues(encomenda.bloco, encomenda.apartamento);
+
+
+    // Altera o botão para "Atualizar"
+    var botao = document.querySelector("#adicionar-encomenda");
+    botao.textContent = "Atualizar Encomenda";
+    botao.classList.remove("btn-primary");
+    botao.classList.add("btn-success");
+
+    // Define que estamos editando e qual o ID
+    editandoId = encomenda._id;
+
+    // Rola para o topo do formulário
+    window.scrollTo(0, 0);
 }
 
-function getStatusClass(status) {
-    const classes = {
-        'RECEBIDA': 'table-warning',
-        'ENTREGUE': 'table-success',
-        'DEVOLVIDA': 'table-danger'
-    };
-    return classes[status] || '';
-}
-
-function formatarData(data) {
-    return new Date(data).toLocaleString('pt-BR');
+function excluirEncomenda(id) {
+    if (confirm("Tem certeza que deseja excluir esta encomenda?")) {
+        fetch(`http://localhost:3000/encomendas/${id}`, {
+            method: 'DELETE'
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('encomenda excluído com sucesso!', 'success');
+                // Remove a linha da tabela
+                const tr = document.querySelector(`tr[data-id="${id}"]`);
+                if (tr) tr.remove();
+            })
+            .catch(err => {
+                console.error('Erro ao excluir encomenda:', err);
+                NotificationSystem.show('Erro ao excluir encomenda', 'erro');
+            });
+    }
 }
 
 function montaTd(dado, classe) {
@@ -120,8 +245,9 @@ function montaTd(dado, classe) {
 
 function validaEncomenda(encomenda) {
     var erros = [];
-    if (!encomenda.entregarPara) erros.push("O campo 'Entregar para' é obrigatório.");
+    if (!encomenda.nomeMorador) erros.push("O nome do morador é obrigatório.");
     if (!encomenda.recebidaPor) erros.push("O campo 'Recebida por' é obrigatório.");
+    if (!encomenda.transportadora) erros.push("A transportadora é obrigatória.");
     if (!encomenda.bloco) erros.push("O bloco é obrigatório.");
     if (!encomenda.apartamento) erros.push("O apartamento é obrigatório.");
 
@@ -138,50 +264,21 @@ function exibiMensagensDeErro(erros) {
     });
 }
 
-// Carregar encomendas do backend
-function carregarEncomendas() {
-    fetch('http://localhost:3000/encomendas')
-        .then(res => res.json())
-        .then(encomendas => {
-            document.querySelector("#tabela-encomendas").innerHTML = "";
-            encomendasCadastradas = encomendas;
-            encomendas.forEach(e => adicionaEncomendaNaTabela(e));
-            NotificationSystem.show('Lista de encomendas atualizada!', 'info');
-        })
-        .catch(err => console.error("Erro ao carregar encomendas:", err));
-}
-
-// Delegation para botões de entregar
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn-entregar')) {
-        const encomendaId = e.target.getAttribute('data-id');
-        if (encomendaId) {
-            marcarComoEntregue(encomendaId);
-        }
-    }
-});
-
-function marcarComoEntregue(encomendaId) {
-    fetch(`http://localhost:3000/encomendas/${encomendaId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'ENTREGUE' })
-    })
-    .then(res => res.json())
-    .then(data => {
-        NotificationSystem.show('Encomenda marcada como entregue!', 'success');
-        carregarEncomendas();
-    })
-    .catch(err => {
-        console.error('Erro ao atualizar encomenda:', err);
-        NotificationSystem.show('Erro ao marcar como entregue', 'error');
-    });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
+    // Carregar moradores para o select
+    carregarMoradores();
+
     // Inicializar componente de bloco e apartamento
     blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
 
-    // Carregar encomendas ao iniciar
-    carregarEncomendas();
+    // Buscar encomendas já cadastradas
+    fetch('http://localhost:3000/encomendas')
+        .then(res => res.json())
+        .then(encomendas => {
+            encomendasCadastradas = encomendas;
+            encomendas.forEach(encomenda => {
+                adicionaEncomendaNaTabela(encomenda);
+            });
+        })
+        .catch(err => console.error("Erro ao buscar encomendas:", err));
 });

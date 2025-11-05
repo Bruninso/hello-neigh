@@ -5,6 +5,7 @@ const Encomenda = require('../models/encomenda.js');
 // POST - cadastrar encomenda
 router.post('/', async (req, res) => {
   try {
+    
     const novaEncomenda = new Encomenda(req.body);
     await novaEncomenda.save();
     
@@ -26,12 +27,11 @@ router.post('/', async (req, res) => {
 // GET - listar encomendas
 router.get('/', async (req, res) => {
   try {
-    const { bloco, apartamento, status } = req.query;
+    const { bloco, apartamento } = req.query;
     let filtro = {};
     
     if (bloco) filtro.bloco = bloco;
-    if (apartamento) filtro.apartamento = apartamento;
-    if (status) filtro.status = status;
+    if (apartamento) filtro.apartamento = apartamento; // ✅ Converter para número
     
     const encomendas = await Encomenda.find(filtro).sort({ createdAt: -1 });
     res.json(encomendas);
@@ -41,33 +41,48 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PATCH - atualizar status da encomenda
-router.patch('/:id/status', async (req, res) => {
+// PUT - atualizar encomenda por ID
+router.put('/:id', async (req, res) => {
   try {
-    const { status } = req.body;
-    
-    const updateData = { status };
-    if (status === 'ENTREGUE') {
-      updateData.dataHoraEntrega = new Date();
-    }
-    
+
     const encomenda = await Encomenda.findByIdAndUpdate(
       req.params.id,
-      updateData,
-      { new: true }
+      req.body,
+      { new: true, runValidators: true }
     );
+
+    if (!encomenda) {
+      return res.status(404).json({ erro: 'Encomenda não encontrada' });
+    }
+
+    res.json({ 
+      mensagem: 'Encomenda atualizada com sucesso',
+      encomenda 
+    });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      const mensagens = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ erro: 'Dados inválidos', mensagens });
+    }
+
+    console.error('Erro ao atualizar encomenda:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
+  }
+});
+
+// DELETE - excluir encomenda por ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const encomenda = await Encomenda.findByIdAndDelete(req.params.id);
     
     if (!encomenda) {
       return res.status(404).json({ erro: 'Encomenda não encontrada' });
     }
     
-    res.json({ 
-      mensagem: 'Status atualizado com sucesso',
-      encomenda 
-    });
+    res.json({ mensagem: 'Encomenda excluída com sucesso' });
   } catch (err) {
-    console.error('Erro ao atualizar encomenda:', err);
-    res.status(500).json({ erro: 'Erro ao atualizar encomenda' });
+    console.error('Erro ao excluir encomenda:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
   }
 });
 
