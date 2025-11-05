@@ -18,7 +18,37 @@ class BlocoApartamentoComponent {
             </div>
             <div class="grupo">
                 <label for="apartamento" class="fs-5 text-uppercase">Apartamento *</label>
-                <input type="number" id="apartamento" name="apartamento" class="campo campo-medio" required placeholder="Número do apartamento">
+                <select type="number" id="apartamento" name="apartamento" class="campo campo-medio" required>
+                    <option value="">Selecione uma opção</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="31">31</option>
+                    <option value="32">32</option>
+                    <option value="33">33</option>
+                    <option value="41">41</option>
+                    <option value="42">42</option>
+                    <option value="43">43</option>
+                    <option value="51">51</option>
+                    <option value="52">52</option>
+                    <option value="53">53</option>
+                    <option value="61">61</option>
+                    <option value="62">62</option>
+                    <option value="63">63</option>
+                    <option value="71">71</option>
+                    <option value="72">72</option>
+                    <option value="73">73</option>
+                    <option value="81">81</option>
+                    <option value="82">82</option>
+                    <option value="83">83</option>
+                    <option value="91">91</option>
+                    <option value="92">92</option>
+                    <option value="93">93</option>
+                </select>
             </div>
         `;
 

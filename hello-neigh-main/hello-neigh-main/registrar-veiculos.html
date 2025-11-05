@@ -46,27 +46,29 @@
     <main>
         <section class="container mt-3">
             <h2 class="nav-titulo">Cadastro de Veículos</h2>
+            <ul id="mensagens-erro"></ul>
 
-            <form id="form-veiculo">
+            <form id="form-adiciona">
                 <div class="row">
                     <div class="col-md-6">
-                        <label for="placa" class="form-label">Placa *</label>
+                        <label for="placa" class="fs-5 text-uppercase">Placa *</label>
                         <input type="text" id="placa" name="placa" class="form-control" placeholder="ABC-1D23">
                     </div>
                     <div class="col-md-6">
-                        <label for="modelo" class="form-label">Modelo *</label>
-                        <input type="text" id="modelo" name="modelo" class="form-control" placeholder="Onix 1.0">
+                        <label for="modeloVeiculo" class="fs-5 text-uppercase">Modelo *</label>
+                        <input type="text" id="modeloVeiculo" name="modeloVeiculo" class="form-control"
+                            placeholder="Onix 1.0">
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-4">
-                        <label for="cor" class="form-label">Cor</label>
-                        <input type="text" id="cor" name="cor" class="form-control">
+                        <label for="corVeiculo" class="fs-5 text-uppercase">Cor</label>
+                        <input type="text" id="corVeiculo" name="corVeiculo" class="form-control">
                     </div>
                     <div class="col-md-4">
-                        <label for="tipo" class="form-label">Tipo *</label>
-                        <select id="tipo" name="tipo" class="form-select">
+                        <label for="tipoVeiculo" class="fs-5 text-uppercase">Tipo *</label>
+                        <select id="tipoVeiculo" name="tipoVeiculo" class="form-select">
                             <option value="">Selecione</option>
                             <option value="carro">Carro</option>
                             <option value="moto">Moto</option>
@@ -74,27 +76,66 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label for="vaga" class="form-label">Vaga Designada</label>
-                        <input type="text" id="vaga" name="vaga" class="form-control">
+                        <label for="vaga" class="fs-5 text-uppercase">Vaga Designada</label>
+                        <select id="vaga" name="vaga" class="form-select">
+                            <option value="">Selecione</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Bloco e Apartamento (reutilizável) -->
-                <div class="row mt-3" id="bloco-apartamento-container">
-                    <!-- Será preenchido via component -->
+                <div class="grupo">
+                    <label for="nomeMorador" class="fs-5 text-uppercase">Nome do Morador:</label>
+                    <select id="nomeMorador" name="nomeMorador" class="campo campo-medio" required>
+                        <option value="">Selecione um morador</option>
+                    </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Cadastrar Veículo</button>
+                <!-- Componente Bloco/Apartamento -->
+
+                <div id="bloco-apartamento-container"></div>
+
+
+                <button id="adicionar-veiculo" class="btn btn-primary mt-3">Cadastrar Veículo</button>
+                <button type="button" id="cancelar-edicao" class="btn btn-secondary mt-3 ms-2"
+                    style="display: none;">Cancelar</button>
             </form>
         </section>
 
         <section class="container mt-4">
             <h3>Veículos Cadastrados</h3>
-            <div id="tabela-veiculos"></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Placa</th>
+                        <th>Modelo </th>
+                        <th>Cor </th>
+                        <th>Tipo </th>
+                        <th>Vaga </th>
+                        <th>Bloco </th>
+                        <th>Apto </th>
+                        <th>Morador </th>
+                        <th>Ações </th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-veiculos"></tbody>
+            </table>
         </section>
     </main>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
     <script src="js/components/bloco-apartamento.js"></script>
     <script src="js/utils/notifications.js"></script>
     <script src="js/form-veiculo.js"></script>
