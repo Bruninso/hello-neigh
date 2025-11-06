@@ -3,23 +3,24 @@ html,body {
 }
 
 body.my-login-page {
-	background-color: #f7f9fb;
+	background-image: url('../src/teste.jpg'); /* Ajuste o caminho se necessário */
+	background-size: cover;
+	background-position: center;
 	font-size: 14px;
 }
 
-.my-login-page .brand {
-	width: 90px;
-	height: 90px;
-	overflow: hidden;
-	border-radius: 50%;
+.my-login-page .brand-text {
+	text-align: center;
 	margin: 40px auto;
-	box-shadow: 0 4px 8px rgba(0,0,0,.05);
 	position: relative;
 	z-index: 1;
 }
 
-.my-login-page .brand img {
-	width: 100%;
+.my-login-page .brand-text h1 {
+	font-family: "Titan One", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	color: rgba(255, 123, 0, 0.99); /* Cor laranja igual ao index */
 }
 
 .my-login-page .card-wrapper {
@@ -29,6 +30,7 @@ body.my-login-page {
 .my-login-page .card {
 	border-color: transparent;
 	box-shadow: 0 4px 8px rgba(0,0,0,.05);
+	background-color: rgba(255, 255, 255, 0.9); /* Fundo semi-transparente para legibilidade */
 }
 
 .my-login-page .card.fat {
@@ -53,8 +55,9 @@ body.my-login-page {
 
 .my-login-page .footer {
 	margin: 40px 0;
-	color: #888;
+	color: #fff; /* Alterando a cor do texto do footer para branco para contrastar com o fundo */
 	text-align: center;
+	text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 @media screen and (max-width: 425px) {
