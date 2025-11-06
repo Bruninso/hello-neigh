@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Bicicleta = require('../models/bicicleta.js');
-//const upload = require('../utils/upload');
 
-// POST - cadastrar bicicleta com imagem
+// POST - cadastrar bicicleta
 router.post('/', async (req, res) => {
   try {
-    const novaBicicleta = new Bicicleta(dadosBicicleta);
+const novaBicicleta = new Bicicleta(req.body);
     await novaBicicleta.save();
     
     res.status(201).json({ 
@@ -19,10 +18,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ erro: 'Dados inválidos', mensagens });
     }
 
-    if (err.code === 11000) {
-      return res.status(409).json({ erro: 'Já existe uma bicicleta com este ID.' });
-    }
-
     console.error('Erro ao salvar bicicleta:', err);
     res.status(500).json({ erro: 'Erro interno do servidor' });
   }
@@ -31,11 +26,9 @@ router.post('/', async (req, res) => {
 // GET - listar bicicletas
 router.get('/', async (req, res) => {
   try {
-    const { status, localizacao, bloco, apartamento } = req.query;
+    const { bloco, apartamento } = req.query;
     let filtro = {};
     
-    if (status) filtro.status = status;
-    if (localizacao) filtro.localizacao = localizacao;
     if (bloco) filtro.bloco = bloco;
     if (apartamento) filtro.apartamento = apartamento;
     
@@ -47,31 +40,47 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PATCH - atualizar status da bicicleta
-router.patch('/:id/status', async (req, res) => {
+// PUT - atualizar bicicleta por ID
+router.put('/:id', async (req, res) => {
   try {
-    const { status, localizacao } = req.body;
-    
     const bicicleta = await Bicicleta.findByIdAndUpdate(
       req.params.id,
-      { 
-        status, 
-        localizacao
-      },
-      { new: true }
+      req.body,
+      { new: true, runValidators: true }
     );
+
+    if (!bicicleta) {
+      return res.status(404).json({ erro: 'Bicicleta não encontrada' });
+    }
+
+    res.json({ 
+      mensagem: 'Bicicleta atualizada com sucesso',
+      bicicleta 
+    });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      const mensagens = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ erro: 'Dados inválidos', mensagens });
+    }
+
+    console.error('Erro ao atualizar bicicleta:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
+  }
+});
+
+// DELETE - excluir bicicleta por ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const bicicleta = await Bicicleta.findByIdAndDelete(req.params.id);
     
     if (!bicicleta) {
       return res.status(404).json({ erro: 'Bicicleta não encontrada' });
     }
     
-    res.json({ 
-      mensagem: 'Status atualizado com sucesso',
-      bicicleta 
-    });
+    res.json({ mensagem: 'Bicicleta excluída com sucesso' });
   } catch (err) {
-    console.error('Erro ao atualizar bicicleta:', err);
-    res.status(500).json({ erro: 'Erro ao atualizar bicicleta' });
+    console.error('Erro ao excluir bicicleta:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
   }
 });
 

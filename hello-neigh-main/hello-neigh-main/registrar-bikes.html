@@ -29,7 +29,6 @@
           <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
             <ul class="navbar-nav">
               <li><a class="nav-link active" aria-current="page" href="index.html">Início</a></li>
-              <!-- <i class="fa-solid fa-file-pdf"></i> -->
               <li><a class="nav-link"  href="relatorio.html">Relatórios</a></li>
               <li><a class="nav-link" href="login.html">Sair</a></li>
             </ul>
@@ -42,78 +41,48 @@
       <h2 id="titulo-form" class="nav-titulo">Cadastro de Bicicleta</h2>
       <ul id="mensagens-erro"></ul>
       <form id="form-adiciona">
-        <div class="">
-          <label for="bikeId" class="fs-5 text-uppercase">ID da Bicicleta *</label>
-          <input id="bikeId" name="bikeId" type="text" class="campo" placeholder="Número de identificação">
+        <div class="grupo">
+          <label for="modeloBike" class="fs-5 text-uppercase">Modelo da Bicicleta *</label>
+          <input id="modeloBike" name="modeloBike" type="text" class="campo campo-medio" placeholder="Ex: Caloi Mountain Bike">
         </div>
 
         <div class="grupo">
-          <label for="modelo" class="fs-5 text-uppercase">Modelo *</label>
-          <input id="modelo" name="modelo" type="text" class="campo campo-medio" placeholder="Ex: Ebike Myway 4.0">
+          <label for="corBike" class="fs-5 text-uppercase">Cor da Bicicleta *</label>
+          <input id="corBike" name="corBike" type="text" class="campo campo-medio" placeholder="Ex: Vermelha">
         </div>
 
         <div class="grupo">
-          <label for="cor" class="fs-5 text-uppercase">Cor *</label>
-          <input id="cor" name="cor" type="text" class="campo campo-medio" placeholder="Ex: Vermelha">
-        </div>
-
-        <div class="grupo">
-          <label for="status" class="fs-5 text-uppercase">Status *</label>
-          <select id="status" name="status" class="campo campo-medio">
-            <option value="">Selecione uma opção</option>
-            <option value="DISPONIVEL">Disponível</option>
-            <option value="EM_USO">Em uso</option>
-            <option value="MANUTENCAO">Manutenção</option>
+          <label for="nomeMorador" class="fs-5 text-uppercase">Nome do Morador:</label>
+          <select id="nomeMorador" name="nomeMorador" class="campo campo-medio" required>
+            <option value="">Selecione um morador</option>
           </select>
         </div>
 
-        <div class="grupo">
-          <label for="localizacao" class="fs-5 text-uppercase">Localização *</label>
-          <select id="localizacao" name="localizacao" class="campo campo-medio">
-            <option value="">Selecione uma opção</option>
-            <option value="CONDOMINIO">No condomínio</option>
-            <option value="FORA_CONDOMINIO">Fora do condomínio</option>
-          </select>
-        </div>
-
-        <div class="grupo">
-          <label for="moradorResponsavel" class="fs-5 text-uppercase">Morador Responsável *</label>
-          <input id="moradorResponsavel" name="moradorResponsavel" type="text" class="campo campo-medio"
-            placeholder="Nome do morador">
-        </div>
-
-        <div class="grupo">
-          <label for="imagem-bicicleta" class="fs-5 text-uppercase">Imagem da Bicicleta</label>
-          <input type="file" id="imagem-bicicleta" name="imagem" accept="image/*" class="campo campo-medio">
+        <!--div class="grupo">
+          <label for="imagemBike" class="fs-5 text-uppercase">Imagem da Bicicleta</label>
+          <input type="file" id="imagemBike" name="imagemBike" accept="image/*" class="campo campo-medio">
           <div id="preview-imagem-bicicleta" class="image-preview mt-2">
             <div class="text-muted">Nenhuma imagem selecionada</div>
           </div>
-        </div>
+        </div-->
 
         <div id="bloco-apartamento-container"></div>
 
-        <button id="adicionar-bicicleta" class="btn-primary botao bto-principal fs-5 text-uppercase">Cadastrar
-          Bicicleta</button>
+        <button id="adicionar-bicicleta" class="btn-primary botao bto-principal fs-5 text-uppercase">Cadastrar Bicicleta</button>
+        <button type="button" id="cancelar-edicao" class="btn btn-secondary mt-3 ms-2" style="display: none;">Cancelar</button>
       </form>
     </section>
 
     <section class="container mt-3">
       <h2 class="fonte-titulo">Bicicletas Cadastradas</h2>
-      <div class="mb-3">
-        <button id="atualizar-status" class="btn btn-warning">Atualizar Status</button>
-      </div>
       <table class="table table-hover">
         <thead class="table-dark">
           <tr>
-            <th>Bike ID</th>
             <th>Modelo</th>
             <th>Cor</th>
-            <th>Status</th>
-            <th>Localização</th>
             <th>Bloco</th>
             <th>Apartamento</th>
-            <th>Responsável</th>
-            <th>Última Atualização</th>
+            <th>Morador Responsável</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -122,11 +91,13 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
   <script src="js/components/bloco-apartamento.js"></script>
-  <script src="js/components/image-upload.js"></script>
+  <!--script src="js/components/image-upload.js"></script-->
   <script src="js/utils/notifications.js"></script>
   <script src="js/form-bike.js"></script>
 
 </body>
-
 </html>
