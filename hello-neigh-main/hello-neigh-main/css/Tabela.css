@@ -155,3 +155,60 @@ button[disabled=disabled], button:disabled {
 .invisivel {
 	display: none;
 }
+
+
+
+/* ======= Título ======= */
+#titulo-form {
+  text-align: center;
+  color: rgba(255, 123, 0, 0.99);
+  font-size: 2.4rem;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(255, 123, 0, 0.4);
+}
+
+/* ======= Filtros ======= */
+#filtros {
+  padding: 20px;
+  margin-bottom: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  
+}
+
+#filtros label {
+  font-weight: 600;
+  color: #070707;
+}
+
+#filtros select {
+  background-color: #faf6f6;
+  color: rgb(0, 0, 0);
+  border: 1px solid rgba(255, 123, 0, 0.6);
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+#filtros select:hover,
+#filtros select:focus {
+  border-color: rgba(255, 123, 0, 1);
+  outline: none;
+}
+
+
+
+/* ======= Responsividade ======= */
+@media (max-width: 768px) {
+  #filtros {
+    flex-direction: column;
+  }
+
+  #filtros select, #filtros button {
+    width: 100%;
+  }
+}

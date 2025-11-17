@@ -20,22 +20,24 @@
 
 <body>
     <header class="nav-titulo">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
-        <div class="container-fluid">
-          <a class="navbar-brand fonte-titulo cor-especial" href="index.html">Hello Neighbor</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
-            <ul class="navbar-nav">
-              <li><a class="nav-link active" aria-current="page" href="index.html">Início</a></li>
-              <!-- <i class="fa-solid fa-file-pdf"></i> -->
-              <li><a class="nav-link"  href="relatorio.html">Relatórios</a></li>
-              <li><a class="nav-link" href="login.html">Sair</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
+            <div class="container-fluid">
+                <a class="navbar-brand fonte-titulo cor-especial" href="index.html">Hello Neighbor</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                    <ul class="navbar-nav">
+                        <li><a class="nav-link active" aria-current="page" href="index.html">Início</a></li>
+                        <!-- <i class="fa-solid fa-file-pdf"></i> -->
+                        <li><a class="nav-link" href="relatorio.html">Relatórios</a></li>
+                        <li><a class="nav-link" href="login.html">Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </header>
     <main>
         <section class="container mt-3">
@@ -85,34 +87,10 @@
                 </div>
 
                 <div class="grupo">
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="vacinado" name="vacinado" value="true">
-                        <label class="form-check-label" for="vacinado">Vacinado</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="castrado" name="castrado" value="true">
-                        <label class="form-check-label" for="castrado">Castrado</label>
-                    </div>
-                </div>
-
-                <div class="grupo">
-                    <label for="observacoes" class="fs-5 text-uppercase">Observações</label>
-                    <textarea id="observacoes" name="observacoes" class="campo" rows="3"
-                        placeholder="Observações sobre o pet"></textarea>
-                </div>
-
-                <div class="grupo">
-                    <label for="moradorResponsavel" class="fs-5 text-uppercase">Morador Responsável *</label>
-                    <input id="moradorResponsavel" name="moradorResponsavel" type="text" class="campo campo-medio"
-                        placeholder="Nome do morador">
-                </div>
-
-                <div class="grupo">
-                    <label for="imagem-pet" class="fs-5 text-uppercase">Imagem do Pet</label>
-                    <input type="file" id="imagem-pet" name="imagem" accept="image/*" class="campo campo-medio">
-                    <div id="preview-imagem-pet" class="image-preview mt-2">
-                        <div class="text-muted">Nenhuma imagem selecionada</div>
-                    </div>
+                    <label for="nomeMorador" class="fs-5 text-uppercase">Nome do Morador:</label>
+                    <select id="nomeMorador" name="nomeMorador" class="campo campo-medio" required>
+                        <option value="">Selecione um morador</option>
+                    </select>
                 </div>
 
                 <div id="bloco-apartamento-container"></div>
@@ -145,9 +123,9 @@
     </main>
 
     <script src="js/components/bloco-apartamento.js"></script>
-  <script src="js/components/image-upload.js"></script>
-  <script src="js/utils/notifications.js"></script>
-  <script src="js/form-pet.js"></script>
+    <script src="js/components/image-upload.js"></script>
+    <script src="js/utils/notifications.js"></script>
+    <script src="js/form-pet.js"></script>
 
 </body>
 
