@@ -2,6 +2,8 @@ var botaoAdicionar = document.querySelector("#adicionar-encomenda");
 let encomendasCadastradas = [];
 let blocoApartamentoComponent;
 let editandoId = null;
+const token = localStorage.getItem("token");
+
 
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
@@ -20,7 +22,8 @@ botaoAdicionar.addEventListener("click", function (event) {
         fetch(`http://localhost:3000/encomendas/${editandoId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify(encomenda)
         })
@@ -44,7 +47,7 @@ botaoAdicionar.addEventListener("click", function (event) {
         // Cadastrar nova encomenda
         fetch('http://localhost:3000/encomendas', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', "Authorization": "Bearer " + localStorage.getItem("token") },
             body: JSON.stringify(encomenda)
         })
             .then(async res => {
@@ -105,24 +108,43 @@ function cancelarEdicao() {
 }
 
 function carregarMoradores() {
-    fetch('http://localhost:3000/moradores')
-        .then(res => res.json())
-        .then(moradores => {
-            const select = document.querySelector('#nomeMorador');
-            select.innerHTML = '<option value="">Selecione um morador</option>';
+    fetch('http://localhost:3000/moradores', {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+    })
+    .then(async res => {
+        const data = await res.json();
 
-            moradores.forEach(morador => {
-                const option = document.createElement('option');
-                option.value = morador.nomeMorador;
-                option.textContent = morador.nomeMorador;
-                // Armazenar bloco e apartamento como atributos personalizados
-                option.setAttribute('data-bloco', morador.bloco);
-                option.setAttribute('data-apartamento', morador.apartamento);
-                select.appendChild(option);
-            });
-        })
-        .catch(err => console.error("Erro ao carregar moradores:", err));
+        if (!res.ok) {
+            console.error("Erro ao carregar moradores:", data);
+            return [];
+        }
+
+        return data;
+    })
+    .then(moradores => {
+        if (!Array.isArray(moradores)) {
+            console.warn("Resposta inesperada. Moradores não é array:", moradores);
+            return;
+        }
+
+        const select = document.querySelector('#nomeMorador');
+        select.innerHTML = '<option value="">Selecione um morador</option>';
+
+        moradores.forEach(morador => {
+            const option = document.createElement('option');
+            option.value = morador.nomeMorador;
+            option.textContent = morador.nomeMorador;
+            option.setAttribute('data-bloco', morador.bloco);
+            option.setAttribute('data-apartamento', morador.apartamento);
+            select.appendChild(option);
+        });
+    })
+    .catch(err => console.error("Erro ao carregar moradores:", err));
 }
+
 
 // Evento para preencher bloco e apartamento automaticamente
 document.querySelector('#nomeMorador').addEventListener('change', function () {
@@ -220,7 +242,10 @@ function editarEncomenda(encomenda) {
 function excluirEncomenda(id) {
     if (confirm("Tem certeza que deseja excluir esta encomenda?")) {
         fetch(`http://localhost:3000/encomendas/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
         })
             .then(res => res.json())
             .then(data => {
@@ -272,7 +297,12 @@ document.addEventListener("DOMContentLoaded", function () {
     blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
 
     // Buscar encomendas já cadastradas
-    fetch('http://localhost:3000/encomendas')
+    fetch('http://localhost:3000/encomendas', {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
         .then(res => res.json())
         .then(encomendas => {
             encomendasCadastradas = encomendas;

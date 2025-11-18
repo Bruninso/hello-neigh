@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Morador = require('../models/morador.js');
+const auth = require('../middleware/auth');
 
 //POST
-router.post('/', async (req, res) => {
+router.post('/', auth("sindico"), async (req, res) => {
   try {
     let dataNascimento = req.body.nascimento;
 
@@ -42,7 +43,7 @@ router.post('/', async (req, res) => {
 });
 
 //GET
-router.get('/', async (req, res) => {
+router.get('/', auth(), async (req, res) => {
   try {
     const { bloco, apartamento } = req.query;
     let filtro = {};
@@ -58,7 +59,7 @@ router.get('/', async (req, res) => {
 });
 
 // PUT 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth("sindico"), async (req, res) => {
   try {
     const { id } = req.params;
     let dataNascimento = req.body.nascimento;
@@ -96,7 +97,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE (remover morador por ID)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth("sindico"), async (req, res) => {
   try {
     const { id } = req.params;
     const moradorExcluido = await Morador.findByIdAndDelete(id);

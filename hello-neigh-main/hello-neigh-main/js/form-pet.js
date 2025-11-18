@@ -2,6 +2,8 @@ var botaoAdicionar = document.querySelector("#adicionar-pet");
 let petsCadastrados = [];
 let blocoApartamentoComponent;
 let imageUpload;
+const token = localStorage.getItem("token");
+
 
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
@@ -116,6 +118,43 @@ function montaTd(dado, classe) {
     td.textContent = dado;
     td.classList.add(classe);
     return td;
+}
+function carregarMoradores() {
+    fetch('http://localhost:3000/moradores', {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+    })
+    .then(async res => {
+        const data = await res.json();
+
+        if (!res.ok) {
+            console.error("Erro ao carregar moradores:", data);
+            return [];
+        }
+
+        return data;
+    })
+    .then(moradores => {
+        if (!Array.isArray(moradores)) {
+            console.warn("Resposta inesperada. Moradores não é array:", moradores);
+            return;
+        }
+
+        const select = document.querySelector('#nomeMorador');
+        select.innerHTML = '<option value="">Selecione um morador</option>';
+
+        moradores.forEach(morador => {
+            const option = document.createElement('option');
+            option.value = morador.nomeMorador;
+            option.textContent = morador.nomeMorador;
+            option.setAttribute('data-bloco', morador.bloco);
+            option.setAttribute('data-apartamento', morador.apartamento);
+            select.appendChild(option);
+        });
+    })
+    .catch(err => console.error("Erro ao carregar moradores:", err));
 }
 
 function validaPet(pet) {

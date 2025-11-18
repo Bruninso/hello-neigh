@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+const authRoutes = require("./routes/authRoutes");
+const auth = require("./middleware/auth");
+
 const moradorRoutes = require('./routes/moradorRoutes');
 const visitanteRoutes = require('./routes/visitanteRoutes');
 const veiculoRoutes = require('./routes/veiculoRoutes');
@@ -20,12 +23,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/auth", authRoutes);
+
 app.use('/moradores', moradorRoutes);
-app.use('/visitantes', visitanteRoutes);
-app.use('/veiculos', veiculoRoutes);
-app.use('/bicicletas', bicicletaRoutes);
-app.use('/pets', petRoutes);
-app.use('/encomendas', encomendaRoutes);
+app.use('/visitantes', auth(), visitanteRoutes);
+app.use('/veiculos', auth(), veiculoRoutes);
+app.use('/bicicletas', auth(), bicicletaRoutes);
+app.use('/pets', auth(), petRoutes);
+app.use('/encomendas', auth(), encomendaRoutes);
 
 mongoose.connect('mongodb://localhost:27017/helloNeighDB', {
   useNewUrlParser: true,

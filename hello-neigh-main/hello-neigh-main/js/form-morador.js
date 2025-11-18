@@ -2,6 +2,8 @@ var botaoAdicionar = document.querySelector("#adicionar-morador");
 let moradoresCadastrados = [];
 let blocoApartamentoComponent;
 let editandoId = null;
+const token = localStorage.getItem("token");
+
 
 
 botaoAdicionar.addEventListener("click", function (event) {
@@ -24,7 +26,8 @@ botaoAdicionar.addEventListener("click", function (event) {
         fetch(`http://localhost:3000/moradores/${editandoId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify(morador)
         })
@@ -62,7 +65,8 @@ botaoAdicionar.addEventListener("click", function (event) {
         fetch('http://localhost:3000/moradores', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify(morador)
         })
@@ -98,7 +102,7 @@ function cancelarEdicao() {
 
 const botaoCancelar = document.querySelector("#cancelar-edicao");
 
-botaoCancelar.addEventListener("click", function() {
+botaoCancelar.addEventListener("click", function () {
     cancelarEdicao();
     botaoCancelar.style.display = 'none';
 });
@@ -183,26 +187,6 @@ function montaTr(morador) {
     return moradorTr
 }
 
-/*function montaBotaoEditar(morador) {
-    var botaoEditar = document.createElement("button");
-    botaoEditar.textContent = "Editar";
-    botaoEditar.classList.add("btn", "btn-warning", "btn-sm", "me-1");
-    botaoEditar.addEventListener("click", function () {
-        editarMorador(morador);
-    });
-    return botaoEditar;
-}
-
-function montaBotaoExcluir(id) {
-    var botaoExcluir = document.createElement("button");
-    botaoExcluir.textContent = "Excluir";
-    botaoExcluir.classList.add("btn", "btn-danger", "btn-sm");
-    botaoExcluir.addEventListener("click", function () {
-        excluirMorador(id);
-    });
-    return botaoExcluir;
-}*/
-
 function editarMorador(morador) {
     // Preenche o formulário com os dados do morador
     document.querySelector("#nomeMorador").value = morador.nomeMorador;
@@ -233,7 +217,10 @@ function editarMorador(morador) {
 function excluirMorador(id) {
     if (confirm("Tem certeza que deseja excluir este morador?")) {
         fetch(`http://localhost:3000/moradores/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
         })
             .then(res => res.json())
             .then(data => {
@@ -365,15 +352,35 @@ blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-con
 
 //Buscar moradores para a tabela
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('http://localhost:3000/moradores')
-        .then(res => res.json())
-        .then(moradores => {
-            moradoresCadastrados = moradores;
-            moradores.forEach(morador => {
-                adicionaMoradorNaTabela(morador);
-            });
-        })
-        .catch(err => {
-            console.error("Erro ao buscar moradores:", err);
-        });
+
+    fetch('http://localhost:3000/moradores', {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(async res => {
+        if (res.status === 401) {
+            alert("Você precisa fazer login novamente.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (res.status === 403) {
+            alert("Apenas o síndico pode acessar os moradores.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        return res.json();
+    })
+    .then(moradores => {
+        if (!moradores) return;
+        moradoresCadastrados = moradores;
+        moradores.forEach(morador => adicionaMoradorNaTabela(morador));
+    })
+    .catch(err => {
+        console.error("Erro ao buscar moradores:", err);
+    });
 });
+
