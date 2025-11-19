@@ -1,19 +1,14 @@
 const mongoose = require('mongoose');
 
 const petSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  tipo: { type: String, required: true },
-  raca: { type: String },
+  nomePet: { type: String, required: true },
+  tipoPet: { type: String, required: true },
+  raca: { type: String, required: true },
   porte: { type: String },
-  cor: { type: String },
-  imagem: { type: String },
-  dataNascimento: { type: Date },
-  vacinado: { type: Boolean, default: false },
-  castrado: { type: Boolean, default: false },
-  observacoes: { type: String },
+  corPet: { type: String },
   bloco: { type: String, required: true },
   apartamento: { type: String, required: true },
-  moradorResponsavel: { type: String, required: true },
+  nomeMorador: { type: String, required: true },
   }, {
   timestamps: true
 });

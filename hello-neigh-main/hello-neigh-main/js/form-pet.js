@@ -1,10 +1,10 @@
 var botaoAdicionar = document.querySelector("#adicionar-pet");
 let petsCadastrados = [];
 let blocoApartamentoComponent;
-let imageUpload;
+let editandoId = null;
 const token = localStorage.getItem("token");
 
-
+// Cadastrar ou Atualizar Pet
 botaoAdicionar.addEventListener("click", function (event) {
     event.preventDefault();
 
@@ -17,108 +17,78 @@ botaoAdicionar.addEventListener("click", function (event) {
         return;
     }
 
-    // Criar FormData para enviar imagem
-    const formData = new FormData();
-    
-    // Adicionar campos normais
-    Object.keys(pet).forEach(key => {
-        if (key !== 'imagemFile') {
-            formData.append(key, pet[key]);
-        }
-    });
+    if (editandoId) {
+        // Atualiza Pet
+        fetch(`http://localhost:3000/pets/${editandoId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify(pet)
+        })
+            .then(res => res.json())
+            .then(data => {
+                NotificationSystem.show('Pet atualizado com sucesso!', 'success');
 
-    // Adicionar imagem se existir
-    if (pet.imagemFile) {
-        formData.append('imagem', pet.imagemFile);
+                const tr = document.querySelector(`tr[data-id="${editandoId}"]`);
+                if (tr) tr.remove();
+
+                adicionaPetNaTabela(data.pet);
+
+                cancelarEdicao();
+                form.reset();
+            })
+            .catch(err => {
+                console.error('Erro ao atualizar pet:', err);
+                NotificationSystem.show('Erro ao atualizar pet', 'error');
+            });
+
+    } else {
+        // Cadastrar novo Pet
+        fetch('http://localhost:3000/pets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify(pet)
+        })
+            .then(async res => {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error("❌ Erro do servidor:", data);
+                    throw new Error(data.mensagens ? data.mensagens.join(", ") : "Erro ao salvar pet");
+                }
+
+                NotificationSystem.show('Pet cadastrado com sucesso!', 'success');
+                adicionaPetNaTabela(data.pet);
+                form.reset();
+            })
+            .catch(err => {
+                console.error('Erro ao cadastrar pet:', err);
+                NotificationSystem.show('Erro ao cadastrar pet', 'error');
+            });
     }
 
-    // Enviar pet para backend
-    fetch('http://localhost:3000/pets', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        NotificationSystem.show('Pet cadastrado com sucesso!', 'success');
-        form.reset();
-        imageUpload.reset();
-        document.querySelector("#mensagens-erro").innerHTML = "";
-        // Recarregar a tabela
-        setTimeout(() => location.reload(), 1000);
-    })
-    .catch(err => {
-        console.error('Erro ao salvar pet:', err);
-        NotificationSystem.show('Erro ao cadastrar pet', 'error');
-    });
+    document.querySelector("#mensagens-erro").innerHTML = "";
 });
 
-function adicionaPetNaTabela(pet) {
-    var petTr = montaTr(pet);
-    var tabela = document.querySelector("#tabela-pets");
-    tabela.appendChild(petTr);
+// Cancelar edição
+function cancelarEdicao() {
+    editandoId = null;
+    var botao = document.querySelector("#adicionar-pet");
+    botao.textContent = "Cadastrar Pet";
+    botao.classList.remove("btn-success");
+    botao.classList.add("btn-primary");
+    document.querySelector("#cancelar-edicao").style.display = 'none';
 }
 
-function obtemPetDoFormulario(form) {
-    const blocoApartamento = blocoApartamentoComponent.getValues();
+// Botão cancelar
+document.querySelector("#cancelar-edicao").addEventListener("click", cancelarEdicao);
 
-    return {
-        nome: form.nome.value,
-        tipo: form.tipo.value,
-        raca: form.raca.value,
-        porte: form.porte.value,
-        cor: form.cor.value,
-        dataNascimento: form.dataNascimento.value,
-        vacinado: form.vacinado.checked,
-        castrado: form.castrado.checked,
-        observacoes: form.observacoes.value,
-        moradorResponsavel: form.moradorResponsavel.value,
-        bloco: blocoApartamento.bloco,
-        apartamento: blocoApartamento.apartamento,
-        imagemFile: imageUpload.getImageFile()
-    };
-}
-
-function montaTr(pet) {
-    var tr = document.createElement("tr");
-    tr.appendChild(montaTd(pet.nome, "info-nome"));
-    tr.appendChild(montaTd(formatarTipo(pet.tipo), "info-tipo"));
-    tr.appendChild(montaTd(pet.raca || '-', "info-raca"));
-    tr.appendChild(montaTd(formatarPorte(pet.porte), "info-porte"));
-    tr.appendChild(montaTd(pet.cor || '-', "info-cor"));
-    tr.appendChild(montaTd(pet.vacinado ? 'Sim' : 'Não', "info-vacinado"));
-    tr.appendChild(montaTd(pet.castrado ? 'Sim' : 'Não', "info-castrado"));
-    tr.appendChild(montaTd(pet.bloco, "info-bloco"));
-    tr.appendChild(montaTd(pet.apartamento, "info-apartamento"));
-    tr.appendChild(montaTd(pet.moradorResponsavel, "info-morador"));
-    return tr;
-}
-
-function formatarTipo(tipo) {
-    const tipos = {
-        'cachorro': 'Cachorro',
-        'gato': 'Gato',
-        'ave': 'Ave',
-        'roedor': 'Roedor',
-        'outro': 'Outro'
-    };
-    return tipos[tipo] || tipo;
-}
-
-function formatarPorte(porte) {
-    const portes = {
-        'pequeno': 'Pequeno',
-        'medio': 'Médio',
-        'grande': 'Grande'
-    };
-    return portes[porte] || porte;
-}
-
-function montaTd(dado, classe) {
-    var td = document.createElement("td");
-    td.textContent = dado;
-    td.classList.add(classe);
-    return td;
-}
+// Carregar moradores
 function carregarMoradores() {
     fetch('http://localhost:3000/moradores', {
         method: "GET",
@@ -126,90 +96,197 @@ function carregarMoradores() {
             "Authorization": "Bearer " + localStorage.getItem("token")
         }
     })
-    .then(async res => {
-        const data = await res.json();
+        .then(async res => {
+            const data = await res.json();
 
-        if (!res.ok) {
-            console.error("Erro ao carregar moradores:", data);
-            return [];
-        }
+            if (!res.ok) {
+                console.error("Erro ao carregar moradores:", data);
+                return [];
+            }
 
-        return data;
-    })
-    .then(moradores => {
-        if (!Array.isArray(moradores)) {
-            console.warn("Resposta inesperada. Moradores não é array:", moradores);
-            return;
-        }
+            return data;
+        })
+        .then(moradores => {
+            const select = document.querySelector('#nomeMorador');
+            select.innerHTML = '<option value="">Selecione um morador</option>';
 
-        const select = document.querySelector('#nomeMorador');
-        select.innerHTML = '<option value="">Selecione um morador</option>';
-
-        moradores.forEach(morador => {
-            const option = document.createElement('option');
-            option.value = morador.nomeMorador;
-            option.textContent = morador.nomeMorador;
-            option.setAttribute('data-bloco', morador.bloco);
-            option.setAttribute('data-apartamento', morador.apartamento);
-            select.appendChild(option);
-        });
-    })
-    .catch(err => console.error("Erro ao carregar moradores:", err));
+            moradores.forEach(morador => {
+                const option = document.createElement('option');
+                option.value = morador.nomeMorador;
+                option.textContent = morador.nomeMorador;
+                option.setAttribute('data-bloco', morador.bloco);
+                option.setAttribute('data-apartamento', morador.apartamento);
+                select.appendChild(option);
+            });
+        })
+        .catch(err => console.error("Erro ao carregar moradores:", err));
 }
 
-function validaPet(pet) {
-    var erros = [];
-    if (!pet.nome) erros.push("O nome do pet não pode estar vazio.");
-    if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(pet.nome)) {
-        erros.push("O nome deve conter apenas letras.");
+// Preenche automaticamente bloco e apartamento
+document.querySelector('#nomeMorador').addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    if (selectedOption.value) {
+        const bloco = selectedOption.getAttribute('data-bloco');
+        const apartamento = selectedOption.getAttribute('data-apartamento');
+
+        blocoApartamentoComponent.setValues(bloco, apartamento);
     }
-    if (!pet.tipo) erros.push("O tipo é obrigatório.");
-    if (!pet.moradorResponsavel) erros.push("O morador responsável é obrigatório.");
+});
+
+// Obtém dados do formulário
+function obtemPetDoFormulario(form) {
+    const blocoApartamento = blocoApartamentoComponent.getValues();
+
+    return {
+        nomePet: form.nomePet.value,
+        tipoPet: form.tipoPet.value,
+        raca: form.raca.value,
+        porte: form.porte.value,
+        corPet: form.corPet.value,
+        bloco: blocoApartamento.bloco,
+        apartamento: blocoApartamento.apartamento,
+        nomeMorador: form.nomeMorador.value
+    };
+}
+
+// Adiciona na tabela
+function adicionaPetNaTabela(pet) {
+    var petTr = montaTr(pet);
+    document.querySelector("#tabela-pets").appendChild(petTr);
+}
+
+// Monta linha da tabela
+function montaTr(pet) {
+    var petTr = document.createElement("tr");
+    petTr.dataset.id = pet._id;
+
+    petTr.appendChild(montaTd(pet.nomePet, "info-nomePet"));
+    petTr.appendChild(montaTd(pet.tipoPet, "info-tipoPet"));
+    petTr.appendChild(montaTd(pet.raca, "info-raca"));
+    petTr.appendChild(montaTd(pet.porte, "info-porte"));
+    petTr.appendChild(montaTd(pet.corPet, "info-corPet"));
+    petTr.appendChild(montaTd(pet.bloco, "info-bloco"));
+    petTr.appendChild(montaTd(pet.apartamento, "info-ap"));
+    petTr.appendChild(montaTd(pet.nomeMorador, "info-morador"));
+
+    // Ações
+    const tdAcoes = document.createElement("td");
+    tdAcoes.classList.add("text-center");
+
+    const dropdownDiv = document.createElement("div");
+    dropdownDiv.classList.add("dropdown");
+
+    const botaoAcoes = document.createElement("button");
+    botaoAcoes.classList.add("btn", "btn-secondary", "btn-sm", "dropdown-toggle");
+    botaoAcoes.setAttribute("data-bs-toggle", "dropdown");
+    botaoAcoes.innerHTML = `<i class="fas fa-ellipsis-v"></i>`;
+    dropdownDiv.appendChild(botaoAcoes);
+
+    const menu = document.createElement("ul");
+    menu.classList.add("dropdown-menu");
+    menu.innerHTML = `
+        <li><a class="dropdown-item editar" href="#">Editar</a></li>
+        <li><a class="dropdown-item excluir" href="#">Excluir</a></li>
+    `;
+
+    dropdownDiv.appendChild(menu);
+    tdAcoes.appendChild(dropdownDiv);
+    petTr.appendChild(tdAcoes);
+
+    menu.querySelector(".editar").addEventListener("click", () => editarPet(pet));
+    menu.querySelector(".excluir").addEventListener("click", () => excluirPet(pet._id));
+
+    return petTr;
+}
+
+// Editar pet
+function editarPet(pet) {
+    document.querySelector("#nomePet").value = pet.nomePet;
+    document.querySelector("#tipoPet").value = pet.tipoPet;
+    document.querySelector("#raca").value = pet.raca;
+    document.querySelector("#porte").value = pet.porte;
+    document.querySelector("#corPet").value = pet.corPet;
+    document.querySelector("#nomeMorador").value = pet.nomeMorador;
+
+    blocoApartamentoComponent.setValues(pet.bloco, pet.apartamento);
+
+    var botao = document.querySelector("#adicionar-pet");
+    botao.textContent = "Atualizar Pet";
+    botao.classList.add("btn-success");
+
+    editandoId = pet._id;
+
+    document.querySelector("#cancelar-edicao").style.display = 'inline-block';
+
+    window.scrollTo(0, 0);
+}
+
+// Excluir pet
+function excluirPet(id) {
+    if (confirm("Tem certeza que deseja excluir este pet?")) {
+        fetch(`http://localhost:3000/pets/${id}`, {
+            method: 'DELETE',
+            headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        })
+            .then(res => res.json())
+            .then(() => {
+                NotificationSystem.show('Pet excluído com sucesso!', 'success');
+                document.querySelector(`tr[data-id="${id}"]`).remove();
+            })
+            .catch(err => {
+                console.error('Erro ao excluir pet:', err);
+                NotificationSystem.show('Erro ao excluir pet', 'error');
+            });
+    }
+}
+
+function montaTd(dado, classe) {
+    const td = document.createElement("td");
+    td.textContent = dado;
+    td.classList.add(classe);
+    return td;
+}
+
+// Validação
+function validaPet(pet) {
+    const erros = [];
+    if (!pet.nomePet) erros.push("O nome do pet é obrigatório.");
+    if (!pet.tipoPet) erros.push("O tipo do pet é obrigatório.");
+    if (!pet.raca) erros.push("O raça do pet é obrigatório.");
+    if (!pet.nomeMorador) erros.push("O nome do morador é obrigatório.");
     if (!pet.bloco) erros.push("O bloco é obrigatório.");
     if (!pet.apartamento) erros.push("O apartamento é obrigatório.");
-
-    // Validação de data
-    if (pet.dataNascimento && !/^\d{2}\/\d{2}\/\d{4}$/.test(pet.dataNascimento)) {
-        erros.push("Data de nascimento deve estar no formato DD/MM/AAAA.");
-    }
-
     return erros;
 }
 
 function exibiMensagensDeErro(erros) {
     var ul = document.querySelector("#mensagens-erro");
     ul.innerHTML = "";
-    erros.forEach(function (erro) {
+    erros.forEach(erro => {
         var li = document.createElement("li");
         li.textContent = erro;
         ul.appendChild(li);
     });
 }
 
-// Máscara para data
-document.addEventListener("DOMContentLoaded", function () {
-    const dataInput = document.querySelector('input[name="dataNascimento"]');
-    if (dataInput) {
-        dataInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 2) value = value.replace(/^(\d{2})(\d)/, '$1/$2');
-            if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
-            e.target.value = value.slice(0, 10);
-        });
-    }
-
-    // Inicializar componente de bloco e apartamento
-    blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
-    
-    // Inicializar upload de imagem
-    imageUpload = new ImageUpload('imagem-pet', 'preview-imagem-pet');
-
-    // Buscar pets já cadastrados
-    fetch('http://localhost:3000/pets')
+// Carregar pets ao iniciar
+function carregarPets() {
+    fetch('http://localhost:3000/pets', {
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token }
+    })
         .then(res => res.json())
         .then(pets => {
+            document.querySelector("#tabela-pets").innerHTML = "";
             petsCadastrados = pets;
             pets.forEach(p => adicionaPetNaTabela(p));
         })
         .catch(err => console.error("Erro ao buscar pets:", err));
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    blocoApartamentoComponent = new BlocoApartamentoComponent('bloco-apartamento-container');
+
+    carregarMoradores();
+    carregarPets();
 });

@@ -1,29 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Pet = require('../models/pet.js');
-//const upload = require('../utils/upload');
+const auth = require("../middleware/auth");
 
-// POST - cadastrar pet com imagem
-router.post('/', async (req, res) => {
+// POST - cadastrar pet
+router.post('/', auth(), async (req, res) => {
   try {
-    const dadosPet = { ...req.body };
-
-    // Converter data de nascimento se fornecida
-    if (dadosPet.dataNascimento) {
-      const [dia, mes, ano] = dadosPet.dataNascimento.split('/');
-      dadosPet.dataNascimento = new Date(`${ano}-${mes}-${dia}`);
-    }
-
-    // Converter checkboxes para boolean
-    dadosPet.vacinado = dadosPet.vacinado === 'true';
-    dadosPet.castrado = dadosPet.castrado === 'true';
-
-    const novoPet = new Pet(dadosPet);
+    const novoPet = new Pet(req.body);
     await novoPet.save();
-    
-    res.status(201).json({ 
+
+    res.status(201).json({
       mensagem: 'Pet cadastrado com sucesso',
-      pet: novoPet 
+      pet: novoPet
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -37,20 +25,67 @@ router.post('/', async (req, res) => {
 });
 
 // GET - listar pets
-router.get('/', async (req, res) => {
+router.get('/', auth(), async (req, res) => {
   try {
-    const { bloco, apartamento, tipo } = req.query;
+    const { bloco, apartamento, tipoPet } = req.query;
     let filtro = {};
-    
+
     if (bloco) filtro.bloco = bloco;
     if (apartamento) filtro.apartamento = apartamento;
-    if (tipo) filtro.tipo = tipo;
-    
+    if (tipoPet) filtro.tipoPet = tipoPet;
+
     const pets = await Pet.find(filtro).sort({ createdAt: -1 });
     res.json(pets);
+
   } catch (err) {
     console.error('Erro ao buscar pets:', err);
     res.status(500).json({ erro: 'Erro ao buscar pets' });
+  }
+});
+
+// PUT - atualizar pet por ID
+router.put('/:id', auth(), async (req, res) => {
+  try {
+    const pet = await Pet.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!pet) {
+      return res.status(404).json({ erro: 'Pet não encontrado' });
+    }
+
+    res.json({
+      mensagem: 'Pet atualizado com sucesso',
+      pet
+    });
+
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      const mensagens = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ erro: 'Dados inválidos', mensagens });
+    }
+
+    console.error('Erro ao atualizar pet:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
+  }
+});
+
+// DELETE - excluir pet por ID
+router.delete('/:id', auth(), async (req, res) => {
+  try {
+    const pet = await Pet.findByIdAndDelete(req.params.id);
+
+    if (!pet) {
+      return res.status(404).json({ erro: 'Pet não encontrado' });
+    }
+
+    res.json({ mensagem: 'Pet excluído com sucesso' });
+
+  } catch (err) {
+    console.error('Erro ao excluir pet:', err);
+    res.status(500).json({ erro: 'Erro interno do servidor' });
   }
 });
 
